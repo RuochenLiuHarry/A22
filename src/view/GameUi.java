@@ -29,7 +29,10 @@ public class GameUi extends JFrame {
     private JPanel gridPanel;
     private JButton[][] gridButtons;
     private JButton[][] computerGridButtons;
-    
+    private JButton rotateButton;
+    private JButton startButton;
+    private JButton endTurnButton;
+    private JButton quitButton;
     public GameUi() {
     	initiallizeUI();
     }
@@ -102,9 +105,24 @@ public class GameUi extends JFrame {
 
 	        panel.add(gridPanel, BorderLayout.CENTER);
 	        
-	     setResizable(false);   
-	     this.add(panel);
-         pack();
+	        JPanel bottomPanel = new JPanel(new GridLayout(1, 4, 10, 0));
+	        bottomPanel.setBackground(new Color(0, 51, 102));
+
+	        rotateButton = new JButton("Rotate Ship");
+	        endTurnButton = new JButton("End Turn");
+	        startButton = new JButton("Start Game");
+	        quitButton = new JButton("Quit");
+
+	        bottomPanel.add(rotateButton);
+	        bottomPanel.add(startButton);
+	        bottomPanel.add(endTurnButton);
+	        bottomPanel.add(quitButton);
+	        
+	        panel.add(bottomPanel, BorderLayout.SOUTH);
+	        setResizable(false);   
+	        this.add(panel);
+	     
+            pack();
 	}
     
     

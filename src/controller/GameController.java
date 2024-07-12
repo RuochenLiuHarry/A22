@@ -2,10 +2,13 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
 
@@ -15,6 +18,12 @@ public class GameController {
     private boolean isPlayerTurn;
     private boolean[][] computerBoardHits;
     private boolean hasPlayerMadeMove;
+    private boolean isHunting;
+    private int lastHitX;
+    private int lastHitY;
+    private List<int[]> availableMoves;
+    private List<int[]> huntMoves;
+    private boolean isFirstMove;
 
     public GameController(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -22,6 +31,10 @@ public class GameController {
         this.isPlayerTurn = true;
         this.computerBoardHits = new boolean[10][10];
         this.hasPlayerMadeMove = false;
+        this.isHunting = false;
+        this.isFirstMove = true;
+        this.availableMoves = generateAvailableMoves();
+        this.huntMoves = new ArrayList<>();
         initializeController();
     }
 
@@ -70,7 +83,17 @@ public class GameController {
             if (!isPlayerTurn || !hasPlayerMadeMove) return;
             isPlayerTurn = false;
             hasPlayerMadeMove = false;
-            computerTurn();
+            gameUi.showPlayerBoard();
+
+            // Use Timer for delay instead of Thread.sleep
+            Timer timer = new Timer(1500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    computerTurn();
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         });
     }
 
@@ -126,6 +149,9 @@ public class GameController {
                         game.markHitOrMiss(x, y, computerBoardHits, isHit);
                         gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                         hasPlayerMadeMove = true;
+                        if (game.checkVictory(game.getComputerBoard())) {
+                            JOptionPane.showMessageDialog(gameUi, "Victory! You have won the game of Battleship!");
+                        }
                     } else if (isPlayerTurn) {
                         JOptionPane.showMessageDialog(gameUi, "Cannot go twice! Please click End Turn button to end your turn.");
                     }
@@ -136,29 +162,89 @@ public class GameController {
 
     private void computerTurn() {
         SwingUtilities.invokeLater(() -> {
-            Random random = new Random();
             boolean turnOver = false;
             int x = 0, y = 0;
+            Random random = new Random();
+
             while (!turnOver) {
-                x = random.nextInt(10);
-                y = random.nextInt(10);
+                if (isFirstMove) {
+                    // Find the first ship position and target it
+                    for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                            if (game.getPlayerBoard()[i][j]) {
+                                x = i;
+                                y = j;
+                                isFirstMove = false;
+                                break;
+                            }
+                        }
+                        if (!isFirstMove) break;
+                    }
+                } else if (isHunting && !huntMoves.isEmpty()) {
+                    int[] nextMove = huntMoves.remove(0);
+                    x = nextMove[0];
+                    y = nextMove[1];
+                } else {
+                    int index = random.nextInt(availableMoves.size());
+                    int[] move = availableMoves.remove(index);
+                    x = move[0];
+                    y = move[1];
+                }
+
                 if (!game.checkHit(x, y, game.getPlayerBoard())) {
                     boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
                     game.markHitOrMiss(x, y, game.getPlayerBoard(), isHit);
                     gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                     turnOver = true;
+
+                    if (isHit) {
+                        isHunting = true;
+                        lastHitX = x;
+                        lastHitY = y;
+                        addHuntMoves(lastHitX, lastHitY);
+                    } else {
+                        isHunting = false;
+                    }
                 }
             }
+
             gameUi.showPlayerBoard();
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    Thread.sleep(3000); // Small delay to allow user to see computer's move
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+            // Use Timer for delay
+            Timer timer = new Timer(1500, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (game.checkVictory(game.getPlayerBoard())) {
+                        JOptionPane.showMessageDialog(gameUi, "Computer has sunk all of your ships. You lost!");
+                    } else {
+                        isPlayerTurn = true;
+                        gameUi.showComputerBoard();
+                    }
                 }
-                isPlayerTurn = true;
-                gameUi.showComputerBoard();
             });
+            timer.setRepeats(false);
+            timer.start();
         });
+    }
+
+    private void addHuntMoves(int x, int y) {
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+            if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10 && !game.checkHit(newX, newY, game.getPlayerBoard())) {
+                huntMoves.add(new int[]{newX, newY});
+            }
+        }
+    }
+
+    private List<int[]> generateAvailableMoves() {
+        List<int[]> moves = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                moves.add(new int[]{i, j});
+            }
+        }
+        return moves;
     }
 }

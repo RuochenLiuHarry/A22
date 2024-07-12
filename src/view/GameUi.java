@@ -44,7 +44,7 @@ public class GameUi extends JFrame {
     private JLabel yourShips3;
     private JLabel yourShips4;
     private JLabel yourShips5;
-
+    
     // Images for ships
     private ImageIcon bowEast;
     private ImageIcon bowNorth;
@@ -55,7 +55,6 @@ public class GameUi extends JFrame {
     private ImageIcon hitIcon;
     private ImageIcon missIcon;
 
-    // Column labels for grid
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
     public GameUi() {
@@ -245,21 +244,6 @@ public class GameUi extends JFrame {
 
     public void showPlayerBoard() {
         panel.remove(computerGridPanel);
-        gridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
-        gridPanel.setBackground(new Color(51, 204, 255));
-
-        gridPanel.add(new JLabel("")); // Empty top-left corner
-        for (String label : colLabel) {
-            gridPanel.add(new JLabel(label, SwingConstants.CENTER));
-        }
-
-        for (int i = 0; i < 10; i++) {
-            gridPanel.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
-            for (int j = 0; j < 10; j++) {
-                gridPanel.add(gridButtons[i][j]);
-            }
-        }
-
         panel.add(gridPanel, BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();

@@ -1,10 +1,12 @@
 package test;
 
+import view.GameUi;
+
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		GameUi gameUi = new GameUi();
+		gameUi.showMenu();
 	}
 
 }

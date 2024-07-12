@@ -33,6 +33,10 @@ public class GameUi extends JFrame {
     private JButton startButton;
     private JButton endTurnButton;
     private JButton quitButton;
+    private JPanel leftPanel;
+    private JPanel rightPanel;
+    private JLabel gameRule;
+    private JLabel chatPart;
     public GameUi() {
     	initiallizeUI();
     }
@@ -105,6 +109,21 @@ public class GameUi extends JFrame {
 
 	        panel.add(gridPanel, BorderLayout.CENTER);
 	        
+	        leftPanel = new JPanel();
+	        leftPanel.setBackground(new Color(0, 51, 90));
+	        gameRule = new JLabel("Getting you up to speed!");
+	        gameRule.setForeground(Color.WHITE);
+	        leftPanel.add(gameRule);
+	        panel.add(leftPanel, BorderLayout.WEST);
+	        
+	        
+	        rightPanel = new JPanel();
+	        rightPanel.setBackground(new Color(0, 51, 90));
+	        chatPart = new JLabel("talk to you competitor! ");
+	        chatPart.setForeground(Color.WHITE);
+	        rightPanel.add(chatPart);
+	        panel.add(rightPanel, BorderLayout.EAST);
+	        
 	        JPanel bottomPanel = new JPanel(new GridLayout(1, 4, 10, 0));
 	        bottomPanel.setBackground(new Color(0, 51, 102));
 
@@ -119,6 +138,8 @@ public class GameUi extends JFrame {
 	        bottomPanel.add(quitButton);
 	        
 	        panel.add(bottomPanel, BorderLayout.SOUTH);
+	        
+	        
 	        setResizable(false);   
 	        this.add(panel);
 	     

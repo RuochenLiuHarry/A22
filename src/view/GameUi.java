@@ -29,6 +29,7 @@ public class GameUi extends JFrame {
     private JMenuItem chineseItem;
     private JPanel gridPanel;
     private JButton[][] gridButtons;
+    private JPanel computerGridPanel;
     private JButton[][] computerGridButtons;
     private JButton rotateButton;
     private JButton startButton;
@@ -43,7 +44,7 @@ public class GameUi extends JFrame {
     private JLabel yourShips3;
     private JLabel yourShips4;
     private JLabel yourShips5;
-    
+
     // Images for ships
     private ImageIcon bowEast;
     private ImageIcon bowNorth;
@@ -51,6 +52,11 @@ public class GameUi extends JFrame {
     private ImageIcon bowWest;
     private ImageIcon midHullHoriz;
     private ImageIcon midHullVert;
+    private ImageIcon hitIcon;
+    private ImageIcon missIcon;
+
+    // Column labels for grid
+    private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
     public GameUi() {
         initializeUI();
@@ -97,7 +103,6 @@ public class GameUi extends JFrame {
 
         gridButtons = new JButton[10][10];
         computerGridButtons = new JButton[10][10];
-        String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
         gridPanel.add(new JLabel("")); // Empty top-left corner
         for (String label : colLabel) {
@@ -188,6 +193,8 @@ public class GameUi extends JFrame {
         bowWest = new ImageIcon(new ImageIcon("bow_west.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
         midHullHoriz = new ImageIcon(new ImageIcon("midhull_horiz.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
         midHullVert = new ImageIcon(new ImageIcon("midhull_vert.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        hitIcon = new ImageIcon(new ImageIcon("hit.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+        missIcon = new ImageIcon(new ImageIcon("miss.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
     }
 
     public void showMenu() {
@@ -204,26 +211,140 @@ public class GameUi extends JFrame {
         gridButtons[x][y].setIcon(icon);
     }
 
-    // Getters for menu items and buttons	
-    public JMenuItem getPveItem() {return pveItem;}
-    public JMenuItem getPvpItem() {return pvpItem;}
-    public JMenuItem getRestartItem() {return restartItem;}
-    public JMenuItem getExitItem() {return exitItem;}
-    public JMenuItem getEnglishItem() {return englishItem;}
-    public JMenuItem getChineseItem() {return chineseItem;}
-    public JButton getRotateButton() {return rotateButton;}
-    public JButton getStartButton() {return startButton;}
-    public JButton getEndTurnButton() {return endTurnButton;}
-    public JButton getQuitButton() {return quitButton;}
+    // Method to mark hit or miss on the player board
+    public void markPlayerBoard(int x, int y, ImageIcon icon) {
+        gridButtons[x][y].setIcon(icon);
+    }
+
+    // Method to mark hit or miss on the computer board
+    public void markComputerBoard(int x, int y, ImageIcon icon) {
+        computerGridButtons[x][y].setIcon(icon);
+    }
+
+    public void showComputerBoard() {
+        panel.remove(gridPanel);
+        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
+        computerGridPanel.setBackground(new Color(51, 204, 255));
+
+        computerGridPanel.add(new JLabel("")); // Empty top-left corner
+        for (String label : colLabel) {
+            computerGridPanel.add(new JLabel(label, SwingConstants.CENTER));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            computerGridPanel.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
+            for (int j = 0; j < 10; j++) {
+                computerGridPanel.add(computerGridButtons[i][j]);
+            }
+        }
+
+        panel.add(computerGridPanel, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public void showPlayerBoard() {
+        panel.remove(computerGridPanel);
+        gridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
+        gridPanel.setBackground(new Color(51, 204, 255));
+
+        gridPanel.add(new JLabel("")); // Empty top-left corner
+        for (String label : colLabel) {
+            gridPanel.add(new JLabel(label, SwingConstants.CENTER));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            gridPanel.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
+            for (int j = 0; j < 10; j++) {
+                gridPanel.add(gridButtons[i][j]);
+            }
+        }
+
+        panel.add(gridPanel, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    // Getters for menu items and buttons
+    public JMenuItem getPveItem() {
+        return pveItem;
+    }
+
+    public JMenuItem getPvpItem() {
+        return pvpItem;
+    }
+
+    public JMenuItem getRestartItem() {
+        return restartItem;
+    }
+
+    public JMenuItem getExitItem() {
+        return exitItem;
+    }
+
+    public JMenuItem getEnglishItem() {
+        return englishItem;
+    }
+
+    public JMenuItem getChineseItem() {
+        return chineseItem;
+    }
+
+    public JButton getRotateButton() {
+        return rotateButton;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
+    }
+
+    public JButton getEndTurnButton() {
+        return endTurnButton;
+    }
+
+    public JButton getQuitButton() {
+        return quitButton;
+    }
 
     // Getters for ship images
-    public ImageIcon getBowEast() {return bowEast;}
-    public ImageIcon getBowNorth() {return bowNorth;}
-    public ImageIcon getBowSouth() {return bowSouth;}
-    public ImageIcon getBowWest() {return bowWest;}
-    public ImageIcon getMidHullHoriz() {return midHullHoriz;}
-    public ImageIcon getMidHullVert() {return midHullVert;}
+    public ImageIcon getBowEast() {
+        return bowEast;
+    }
+
+    public ImageIcon getBowNorth() {
+        return bowNorth;
+    }
+
+    public ImageIcon getBowSouth() {
+        return bowSouth;
+    }
+
+    public ImageIcon getBowWest() {
+        return bowWest;
+    }
+
+    public ImageIcon getMidHullHoriz() {
+        return midHullHoriz;
+    }
+
+    public ImageIcon getMidHullVert() {
+        return midHullVert;
+    }
+
+    public ImageIcon getHitIcon() {
+        return hitIcon;
+    }
+
+    public ImageIcon getMissIcon() {
+        return missIcon;
+    }
 
     // Getter for grid buttons
-    public JButton[][] getGridButtons() {return gridButtons;}
+    public JButton[][] getGridButtons() {
+        return gridButtons;
+    }
+
+    public JButton[][] getComputerGridButtons() {
+        return computerGridButtons;
+    }
 }

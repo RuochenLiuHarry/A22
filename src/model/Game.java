@@ -2,9 +2,11 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
     private boolean[][] playerBoard;
+    private boolean[][] computerBoard;
     private List<String> shipNames;
     private List<Integer> shipLengths;
     private int currentShipIndex;
@@ -12,6 +14,7 @@ public class Game {
 
     public Game() {
         playerBoard = new boolean[10][10];
+        computerBoard = new boolean[10][10];
         shipNames = new ArrayList<>();
         shipLengths = new ArrayList<>();
         initializeShips();
@@ -39,37 +42,37 @@ public class Game {
     public boolean placeShip(int x, int y) {
         if (currentShipIndex >= shipNames.size()) return false;
         int length = shipLengths.get(currentShipIndex);
-        if (canPlaceShip(x, y, length)) {
-            setShipPosition(x, y, length);
+        if (canPlaceShip(x, y, length, playerBoard)) {
+            setShipPosition(x, y, length, playerBoard);
             currentShipIndex++;
             return true;
         }
         return false;
     }
 
-    private boolean canPlaceShip(int x, int y, int length) {
+    private boolean canPlaceShip(int x, int y, int length, boolean[][] board) {
         if (isVertical) {
             if (x + length > 10) return false;
             for (int i = 0; i < length; i++) {
-                if (playerBoard[x + i][y]) return false;
+                if (board[x + i][y]) return false;
             }
         } else {
             if (y + length > 10) return false;
             for (int i = 0; i < length; i++) {
-                if (playerBoard[x][y + i]) return false;
+                if (board[x][y + i]) return false;
             }
         }
         return true;
     }
 
-    private void setShipPosition(int x, int y, int length) {
+    private void setShipPosition(int x, int y, int length, boolean[][] board) {
         if (isVertical) {
             for (int i = 0; i < length; i++) {
-                playerBoard[x + i][y] = true;
+                board[x + i][y] = true;
             }
         } else {
             for (int i = 0; i < length; i++) {
-                playerBoard[x][y + i] = true;
+                board[x][y + i] = true;
             }
         }
     }
@@ -90,5 +93,40 @@ public class Game {
 
     public void toggleRotation() {
         isVertical = !isVertical;
+    }
+
+    // Computer board methods
+    public void placeComputerShips() {
+        Random random = new Random();
+        for (int i = 0; i < shipNames.size(); i++) {
+            int length = shipLengths.get(i);
+            boolean placed = false;
+            while (!placed) {
+                int x = random.nextInt(10);
+                int y = random.nextInt(10);
+                isVertical = random.nextBoolean();
+                if (canPlaceShip(x, y, length, computerBoard)) {
+                    setShipPosition(x, y, length, computerBoard);
+                    placed = true;
+                }
+            }
+        }
+    }
+
+    public boolean checkHit(int x, int y, boolean[][] board) {
+        return board[x][y];
+    }
+
+    public boolean markHitOrMiss(int x, int y, boolean[][] board, boolean isHit) {
+        board[x][y] = isHit;
+        return isHit;
+    }
+
+    public boolean[][] getPlayerBoard() {
+        return playerBoard;
+    }
+
+    public boolean[][] getComputerBoard() {
+        return computerBoard;
     }
 }

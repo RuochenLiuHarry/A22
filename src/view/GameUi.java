@@ -102,7 +102,7 @@ public class GameUi extends JFrame {
 
 	        panel.add(gridPanel, BorderLayout.CENTER);
 	        
-	        
+	     setResizable(false);   
 	     this.add(panel);
          pack();
 	}

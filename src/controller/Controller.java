@@ -6,11 +6,11 @@ import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
 
-public class GameController {
+public class Controller {
     private GameUi gameUi;
     private Game game;
 
-    public GameController(GameUi gameUi) {
+    public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
         initializeController();

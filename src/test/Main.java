@@ -6,7 +6,7 @@ import controller.Controller;
 public class Main {
     public static void main(String[] args) {
         GameUi gameUi = new GameUi();
-        Controller gameController = new Controller(gameUi);
+        new Controller(gameUi);
         gameUi.showMenu();
     }
 }

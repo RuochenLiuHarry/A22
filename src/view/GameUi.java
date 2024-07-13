@@ -205,6 +205,9 @@ public class GameUi extends JFrame {
         JOptionPane.showMessageDialog(this, "Please place your 5 ships on the board.");
     }
 
+    public void showYourTurn() {
+    	JOptionPane.showMessageDialog(this, "It's your turn now.");
+    }
     // Method to place a ship part on the board
     public void placeShipPart(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);

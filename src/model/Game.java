@@ -280,9 +280,9 @@ public class Game {
             }
 
             gameUi.showPlayerBoard();
-
+           
             // Use Timer for delay
-            Timer timer = new Timer(1500, new ActionListener() {
+            Timer timer = new Timer(1700, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (checkVictory(getPlayerBoard())) {
@@ -290,6 +290,8 @@ public class Game {
                     } else {
                         isPlayerTurn = true;
                         gameUi.showComputerBoard();
+                        gameUi.showYourTurn();
+
                     }
                 }
             });

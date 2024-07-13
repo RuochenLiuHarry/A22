@@ -15,12 +15,12 @@ public class viewController{
 	
 	private void initializeController() {
         // PVE
-        gameUi.getPveItem().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameUi.showPveDialog();
-            }
-        });
+//        gameUi.getPveItem().addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                gameUi.showPveDialog();
+//            }
+//        });
 
         // PVP
         gameUi.getPvpItem().addActionListener(new ActionListener() {

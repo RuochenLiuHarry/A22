@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
@@ -42,13 +41,13 @@ public class GameController {
         // Rotate Ship
         gameUi.getRotateButton().addActionListener(e -> {
             game.toggleRotation();
-            JOptionPane.showMessageDialog(gameUi, "Ship rotation toggled to " + (game.isVertical() ? "vertical" : "horizontal"));
+            gameUi.showRotationMessage(game.isVertical());
         });
 
         // Start Game
         gameUi.getStartButton().addActionListener(e -> {
             if (game.getCurrentShipName() != null) {
-                JOptionPane.showMessageDialog(gameUi, "Place all your ships before starting the game.");
+                gameUi.showPlaceAllShipsMessage();
             } else {
                 game.placeComputerShips();
                 gameUi.showComputerBoard();

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import view.GameUi;
@@ -73,13 +72,24 @@ public class Game {
                 button.addActionListener(e -> {
                     if (placeShip(x, y)) {
                         if (getCurrentShipName() == null) {
-                            JOptionPane.showMessageDialog(gameUi, "All ships placed! Click Start Game To Play!!");
+                            gameUi.showAllShipsPlacedMessage();
                             disableShipPlacement(); // Disable ship placement buttons
                         }
                     } else {
-                        JOptionPane.showMessageDialog(gameUi, "Cannot place ship here!");
+                        gameUi.showCannotPlaceShipMessage();
                     }
                 });
+            }
+        }
+    }
+
+    private void disableShipPlacement() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                JButton button = gameUi.getGridButtons()[i][j];
+                for (ActionListener al : button.getActionListeners()) {
+                    button.removeActionListener(al);
+                }
             }
         }
     }
@@ -105,17 +115,6 @@ public class Game {
             return true;
         }
         return false;
-    }
-
-    private void disableShipPlacement() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                JButton button = gameUi.getGridButtons()[i][j];
-                for (ActionListener al : button.getActionListeners()) {
-                    button.removeActionListener(al);
-                }
-            }
-        }
     }
 
     private boolean canPlaceShip(int x, int y, int length, boolean[][] board) {
@@ -222,10 +221,10 @@ public class Game {
                         gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                         hasPlayerMadeMove = true;
                         if (checkVictory(getComputerBoard())) {
-                            JOptionPane.showMessageDialog(gameUi, "Victory! You have won the game of Battleship!");
+                            gameUi.showVictoryMessage();
                         }
                     } else if (isPlayerTurn) {
-                        JOptionPane.showMessageDialog(gameUi, "Cannot go twice! Please click End Turn button to end your turn.");
+                        gameUi.showCannotGoTwiceMessage();
                     }
                 });
             }
@@ -287,7 +286,7 @@ public class Game {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (checkVictory(getPlayerBoard())) {
-                        JOptionPane.showMessageDialog(gameUi, "Computer has sunk all of your ships. You lost!");
+                        gameUi.showLossMessage();
                     } else {
                         isPlayerTurn = true;
                         gameUi.showComputerBoard();

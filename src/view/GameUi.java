@@ -331,4 +331,33 @@ public class GameUi extends JFrame {
     public JButton[][] getComputerGridButtons() {
         return computerGridButtons;
     }
+    
+    // GameController dialog 
+    public void showRotationMessage(boolean isVertical) {
+        JOptionPane.showMessageDialog(this, "Ship rotation toggled to " + (isVertical ? "vertical" : "horizontal"));
+    }
+
+    public void showPlaceAllShipsMessage() {
+        JOptionPane.showMessageDialog(this, "Place all your ships before starting the game.");
+    }
+
+    public void showAllShipsPlacedMessage() {
+        JOptionPane.showMessageDialog(this, "All ships placed! Click Start Game To Play!!");
+    }
+
+    public void showCannotPlaceShipMessage() {
+        JOptionPane.showMessageDialog(this, "Cannot place ship here!");
+    }
+
+    public void showVictoryMessage() {
+        JOptionPane.showMessageDialog(this, "Victory! You have won the game of Battleship!");
+    }
+
+    public void showLossMessage() {
+        JOptionPane.showMessageDialog(this, "Computer has sunk all of your ships. You lost!");
+    }
+
+    public void showCannotGoTwiceMessage() {
+        JOptionPane.showMessageDialog(this, "Cannot go twice! Please click End Turn button to end your turn.");
+    }
 }

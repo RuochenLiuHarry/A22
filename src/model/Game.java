@@ -184,9 +184,8 @@ public class Game {
         return board[x][y];
     }
 
-    public boolean markHitOrMiss(int x, int y, boolean[][] board, boolean isHit) {
+    public void markHitOrMiss(int x, int y, boolean[][] board, boolean isHit) {
         board[x][y] = isHit;
-        return isHit;
     }
 
     public boolean checkVictory(boolean[][] board) {
@@ -262,9 +261,9 @@ public class Game {
                     y = move[1];
                 }
 
-                if (!checkHit(x, y, getPlayerBoard())) {
+                if (!computerBoardHits[x][y]) {
                     boolean isHit = checkHit(x, y, getPlayerBoard());
-                    markHitOrMiss(x, y, getPlayerBoard(), isHit);
+                    markHitOrMiss(x, y, computerBoardHits, isHit);
                     gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                     turnOver = true;
 
@@ -303,7 +302,7 @@ public class Game {
         for (int[] direction : directions) {
             int newX = x + direction[0];
             int newY = y + direction[1];
-            if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10 && !checkHit(newX, newY, getPlayerBoard())) {
+            if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10 && !computerBoardHits[newX][newY]) {
                 huntMoves.add(new int[]{newX, newY});
             }
         }

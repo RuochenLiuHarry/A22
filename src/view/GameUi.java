@@ -61,12 +61,12 @@ public class GameUi extends JFrame {
     private ResourceBundle bundle;
 
     public GameUi() {
-    	initializeComponents();
+        initializeComponents();
         loadImages();
         changeLocale(Locale.ENGLISH);
         initializeUI();
     }
-    
+
     private void initializeComponents() {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
@@ -438,7 +438,8 @@ public class GameUi extends JFrame {
     public void showCannotGoTwiceMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showCannotGoTwiceMessage"));
     }
+
     public void exitGame() {
-    	System.exit(0);
+        System.exit(0);
     }
 }

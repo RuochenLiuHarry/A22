@@ -3,7 +3,6 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
-
 import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
@@ -37,19 +36,19 @@ public class Controller {
 
         // Exit
         gameUi.getExitItem().addActionListener(e -> {
-        	gameUi.exitGame();
+            gameUi.exitGame();
         });
-        
-        gameUi.getQuitButton().addActionListener(e ->{
-        	gameUi.exitGame();
+
+        gameUi.getQuitButton().addActionListener(e -> {
+            gameUi.exitGame();
         });
-        
-        gameUi.getEnglishItem().addActionListener(e ->{
-        	gameUi.changeLocale(Locale.ENGLISH);
+
+        gameUi.getEnglishItem().addActionListener(e -> {
+            gameUi.changeLocale(Locale.ENGLISH);
         });
-        
-        gameUi.getChineseItem().addActionListener(e ->{
-        	gameUi.changeLocale(Locale.SIMPLIFIED_CHINESE);
+
+        gameUi.getChineseItem().addActionListener(e -> {
+            gameUi.changeLocale(Locale.SIMPLIFIED_CHINESE);
         });
 
         // Rotate Ship
@@ -77,15 +76,21 @@ public class Controller {
             game.setHasPlayerMadeMove(false);
             gameUi.showPlayerBoard();
 
-            // Use Timer for delay instead of Thread.sleep
-            Timer timer = new Timer(1500, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    game.computerTurn();
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
+            // Check for victory before computer's turn
+            if (game.checkVictory(game.getPlayerHits())) {
+                gameUi.showVictoryMessage();
+                game.disableGamePlay();
+            } else {
+                // Use Timer for delay instead of Thread.sleep
+                Timer timer = new Timer(1500, new ActionListener() { // Orginal 1500
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        game.computerTurn();
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
+            }
         });
     }
 }

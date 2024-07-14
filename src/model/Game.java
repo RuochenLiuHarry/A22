@@ -14,12 +14,13 @@ public class Game {
     private GameUi gameUi;
     private boolean[][] playerBoard;
     private boolean[][] computerBoard;
+    private boolean[][] playerBoardHits;
+    private boolean[][] computerBoardHits;
     private List<String> shipNames;
     private List<Integer> shipLengths;
     private int currentShipIndex;
     private boolean isVertical;
     private boolean isPlayerTurn;
-    private boolean[][] computerBoardHits;
     private boolean hasPlayerMadeMove;
     private boolean isHunting;
     private int lastHitX;
@@ -27,22 +28,29 @@ public class Game {
     private List<int[]> availableMoves;
     private List<int[]> huntMoves;
     private boolean isFirstMove;
+    private int playerHits;
+    private int computerHits;
+
+    private static final int TOTAL_SHIP_PARTS = 17; // Total ship parts for victory check
 
     public Game(GameUi gameUi) {
         this.gameUi = gameUi;
         this.playerBoard = new boolean[10][10];
         this.computerBoard = new boolean[10][10];
+        this.playerBoardHits = new boolean[10][10];
+        this.computerBoardHits = new boolean[10][10];
         this.shipNames = new ArrayList<>();
         this.shipLengths = new ArrayList<>();
         this.currentShipIndex = 0;
         this.isVertical = true; // Default rotation is vertical
         this.isPlayerTurn = true;
-        this.computerBoardHits = new boolean[10][10];
         this.hasPlayerMadeMove = false;
         this.isHunting = false;
         this.isFirstMove = true;
         this.availableMoves = generateAvailableMoves();
         this.huntMoves = new ArrayList<>();
+        this.playerHits = 0;
+        this.computerHits = 0;
         initializeShips();
     }
 
@@ -184,19 +192,27 @@ public class Game {
         return board[x][y];
     }
 
-    public void markHitOrMiss(int x, int y, boolean[][] board, boolean isHit) {
-        board[x][y] = isHit;
-    }
-
-    public boolean checkVictory(boolean[][] board) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (board[i][j]) {
-                    return false;
-                }
+    public void markHitOrMiss(int x, int y, boolean[][] hitsBoard, boolean isHit) {
+        hitsBoard[x][y] = true;
+        if (isHit) {
+            if (hitsBoard == computerBoardHits) {
+                playerHits++;
+            } else if (hitsBoard == playerBoardHits) {
+                computerHits++;
             }
         }
-        return true;
+    }
+
+    public boolean checkVictory(int hits) {
+        return hits >= TOTAL_SHIP_PARTS;
+    }
+
+    public int getPlayerHits() {
+        return playerHits;
+    }
+
+    public int getComputerHits() {
+        return computerHits;
     }
 
     public boolean[][] getPlayerBoard() {
@@ -214,18 +230,32 @@ public class Game {
                 int y = j;
                 JButton button = gameUi.getComputerGridButtons()[i][j];
                 button.addActionListener(e -> {
-                    if (isPlayerTurn && !hasPlayerMadeMove) {
-                        boolean isHit = checkHit(x, y, getComputerBoard());
-                        markHitOrMiss(x, y, computerBoardHits, isHit);
-                        gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-                        hasPlayerMadeMove = true;
-                        if (checkVictory(getComputerBoard())) {
-                            gameUi.showVictoryMessage();
+                    if (isPlayerTurn) {
+                        if (hasPlayerMadeMove) {
+                            gameUi.showCannotGoTwiceMessage();
+                        } else {
+                            boolean isHit = checkHit(x, y, getComputerBoard());
+                            markHitOrMiss(x, y, computerBoardHits, isHit);
+                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                            hasPlayerMadeMove = true;
+                            if (checkVictory(playerHits)) {
+                                gameUi.showVictoryMessage();
+                                disableGamePlay();
+                            }
                         }
-                    } else if (isPlayerTurn) {
-                        gameUi.showCannotGoTwiceMessage();
                     }
                 });
+            }
+        }
+    }
+
+    public void disableGamePlay() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                JButton button = gameUi.getComputerGridButtons()[i][j];
+                for (ActionListener al : button.getActionListeners()) {
+                    button.removeActionListener(al);
+                }
             }
         }
     }
@@ -261,9 +291,9 @@ public class Game {
                     y = move[1];
                 }
 
-                if (!computerBoardHits[x][y]) {
+                if (!playerBoardHits[x][y]) {
                     boolean isHit = checkHit(x, y, getPlayerBoard());
-                    markHitOrMiss(x, y, computerBoardHits, isHit);
+                    markHitOrMiss(x, y, playerBoardHits, isHit);
                     gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                     turnOver = true;
 
@@ -279,18 +309,18 @@ public class Game {
             }
 
             gameUi.showPlayerBoard();
-           
+
             // Use Timer for delay
-            Timer timer = new Timer(1700, new ActionListener() {
+            Timer timer = new Timer(1500, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (checkVictory(getPlayerBoard())) {
+                    if (checkVictory(computerHits)) {
                         gameUi.showLossMessage();
+                        disableGamePlay();
                     } else {
                         isPlayerTurn = true;
                         gameUi.showComputerBoard();
                         gameUi.showYourTurn();
-
                     }
                 }
             });
@@ -304,7 +334,7 @@ public class Game {
         for (int[] direction : directions) {
             int newX = x + direction[0];
             int newY = y + direction[1];
-            if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10 && !computerBoardHits[newX][newY]) {
+            if (newX >= 0 && newX < 10 && newY >= 0 && newY < 10 && !playerBoardHits[newX][newY]) {
                 huntMoves.add(new int[]{newX, newY});
             }
         }

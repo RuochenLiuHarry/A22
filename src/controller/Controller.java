@@ -2,6 +2,8 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+
 import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
@@ -35,7 +37,19 @@ public class Controller {
 
         // Exit
         gameUi.getExitItem().addActionListener(e -> {
-            System.exit(0);
+        	gameUi.exitGame();
+        });
+        
+        gameUi.getQuitButton().addActionListener(e ->{
+        	gameUi.exitGame();
+        });
+        
+        gameUi.getEnglishItem().addActionListener(e ->{
+        	gameUi.changeLocale(Locale.ENGLISH);
+        });
+        
+        gameUi.getChineseItem().addActionListener(e ->{
+        	gameUi.changeLocale(Locale.SIMPLIFIED_CHINESE);
         });
 
         // Rotate Ship

@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -44,7 +46,7 @@ public class GameUi extends JFrame {
     private JLabel yourShips3;
     private JLabel yourShips4;
     private JLabel yourShips5;
-    
+
     // Images for ships
     private ImageIcon bowEast;
     private ImageIcon bowNorth;
@@ -56,6 +58,7 @@ public class GameUi extends JFrame {
     private ImageIcon missIcon;
 
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+    private ResourceBundle bundle;
 
     public GameUi() {
         initializeUI();
@@ -66,26 +69,29 @@ public class GameUi extends JFrame {
         setTitle("Battleship");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Set default locale and resource bundle
+        changeLocale(Locale.ENGLISH);
+
         JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
-        gameMenu = new JMenu("Game");
+        gameMenu = new JMenu();
         menuBar.add(gameMenu);
 
-        pveItem = new JMenuItem("PVE");
-        pvpItem = new JMenuItem("PVP");
-        restartItem = new JMenuItem("Restart");
-        exitItem = new JMenuItem("Exit");
+        pveItem = new JMenuItem();
+        pvpItem = new JMenuItem();
+        restartItem = new JMenuItem();
+        exitItem = new JMenuItem();
 
         gameMenu.add(pveItem);
         gameMenu.add(pvpItem);
         gameMenu.add(restartItem);
         gameMenu.add(exitItem);
 
-        languageMenu = new JMenu("Language");
+        languageMenu = new JMenu();
         menuBar.add(languageMenu);
 
-        englishItem = new JMenuItem("English");
-        chineseItem = new JMenuItem("Chinese");
+        englishItem = new JMenuItem();
+        chineseItem = new JMenuItem();
 
         languageMenu.add(englishItem);
         languageMenu.add(chineseItem);
@@ -131,15 +137,15 @@ public class GameUi extends JFrame {
         leftPanel.setBackground(new Color(0, 51, 90));
         leftPanel.setPreferredSize(new Dimension(150, leftPanel.getPreferredSize().height));
         leftPanel.setLayout(new GridLayout(6, 1));
-        gameRule = new JLabel("Your ships");
+        gameRule = new JLabel();
         gameRule.setForeground(Color.WHITE);
         leftPanel.add(gameRule);
 
-        yourShips1 = new JLabel("Carrier: 5/5");
-        yourShips2 = new JLabel("Cruiser: 4/4");
-        yourShips3 = new JLabel("Destroyer: 3/3");
-        yourShips4 = new JLabel("Missile Frigate: 3/3");
-        yourShips5 = new JLabel("Submarine: 2/2");
+        yourShips1 = new JLabel();
+        yourShips2 = new JLabel();
+        yourShips3 = new JLabel();
+        yourShips4 = new JLabel();
+        yourShips5 = new JLabel();
 
         yourShips1.setForeground(Color.WHITE);
         yourShips2.setForeground(Color.WHITE);
@@ -159,7 +165,7 @@ public class GameUi extends JFrame {
         rightPanel = new JPanel();
         rightPanel.setBackground(new Color(0, 51, 90));
         rightPanel.setPreferredSize(new Dimension(150, rightPanel.getPreferredSize().height));
-        chatPart = new JLabel("Talk to your competitor!");
+        chatPart = new JLabel();
         chatPart.setForeground(Color.WHITE);
         rightPanel.add(chatPart);
         panel.add(rightPanel, BorderLayout.EAST);
@@ -167,10 +173,10 @@ public class GameUi extends JFrame {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         bottomPanel.setBackground(new Color(0, 51, 102));
 
-        rotateButton = new JButton("Rotate Ship");
-        endTurnButton = new JButton("End Turn");
-        startButton = new JButton("Start Game");
-        quitButton = new JButton("Quit");
+        rotateButton = new JButton();
+        endTurnButton = new JButton();
+        startButton = new JButton();
+        quitButton = new JButton();
 
         bottomPanel.add(rotateButton);
         bottomPanel.add(startButton);
@@ -183,6 +189,11 @@ public class GameUi extends JFrame {
         this.add(panel);
 
         pack();
+
+        // Set initial text from the resource bundle
+        updateText();
+
+    
     }
 
     private void loadImages() {
@@ -196,29 +207,66 @@ public class GameUi extends JFrame {
         missIcon = new ImageIcon(new ImageIcon("miss.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
     }
 
+    public void changeLocale(Locale locale) {
+        try {
+            Locale.setDefault(locale);
+            bundle = ResourceBundle.getBundle("MessagesBundle", locale);
+            System.out.println("Loaded resource bundle for locale: " + locale);
+            updateText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error loading resource bundle for locale: " + locale);
+        }
+    }
+
+    private void updateText() {
+        try {
+            gameMenu.setText(bundle.getString("gameMenu"));
+            pveItem.setText(bundle.getString("pveItem"));
+            pvpItem.setText(bundle.getString("pvpItem"));
+            restartItem.setText(bundle.getString("restartItem"));
+            exitItem.setText(bundle.getString("exitItem"));
+            languageMenu.setText(bundle.getString("languageMenu"));
+            englishItem.setText(bundle.getString("englishItem"));
+            chineseItem.setText(bundle.getString("chineseItem"));
+            rotateButton.setText(bundle.getString("rotateButton"));
+            startButton.setText(bundle.getString("startButton"));
+            endTurnButton.setText(bundle.getString("endTurnButton"));
+            quitButton.setText(bundle.getString("quitButton"));
+            gameRule.setText(bundle.getString("gameRule"));
+            chatPart.setText(bundle.getString("chatPart"));
+            yourShips1.setText(bundle.getString("yourShips1"));
+            yourShips2.setText(bundle.getString("yourShips2"));
+            yourShips3.setText(bundle.getString("yourShips3"));
+            yourShips4.setText(bundle.getString("yourShips4"));
+            yourShips5.setText(bundle.getString("yourShips5"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error updating text for locale: " + Locale.getDefault());
+        }
+    }
+
     public void showMenu() {
         setVisible(true);
-        JOptionPane.showMessageDialog(this, "To start the game, click on the menu bar Game tab.");
+        JOptionPane.showMessageDialog(this, bundle.getString("showMenuMessage"));
     }
 
     public void showPveDialog() {
-        JOptionPane.showMessageDialog(this, "Please place your 5 ships on the board.");
+        JOptionPane.showMessageDialog(this, bundle.getString("showPveDialogMessage"));
     }
 
     public void showYourTurn() {
-    	JOptionPane.showMessageDialog(this, "It's your turn now.");
+        JOptionPane.showMessageDialog(this, bundle.getString("showYourTurnMessage"));
     }
-    // Method to place a ship part on the board
+
     public void placeShipPart(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-    // Method to mark hit or miss on the player board
     public void markPlayerBoard(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-    // Method to mark hit or miss on the computer board
     public void markComputerBoard(int x, int y, ImageIcon icon) {
         computerGridButtons[x][y].setIcon(icon);
     }
@@ -252,7 +300,6 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
-    // Getters for menu items and buttons
     public JMenuItem getPveItem() {
         return pveItem;
     }
@@ -293,7 +340,6 @@ public class GameUi extends JFrame {
         return quitButton;
     }
 
-    // Getters for ship images
     public ImageIcon getBowEast() {
         return bowEast;
     }
@@ -326,7 +372,6 @@ public class GameUi extends JFrame {
         return missIcon;
     }
 
-    // Getter for grid buttons
     public JButton[][] getGridButtons() {
         return gridButtons;
     }
@@ -334,33 +379,35 @@ public class GameUi extends JFrame {
     public JButton[][] getComputerGridButtons() {
         return computerGridButtons;
     }
-    
-    // GameController dialog 
+
     public void showRotationMessage(boolean isVertical) {
-        JOptionPane.showMessageDialog(this, "Ship rotation toggled to " + (isVertical ? "vertical" : "horizontal"));
+        JOptionPane.showMessageDialog(this, bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
     }
 
     public void showPlaceAllShipsMessage() {
-        JOptionPane.showMessageDialog(this, "Place all your ships before starting the game.");
+        JOptionPane.showMessageDialog(this, bundle.getString("showPlaceAllShipsMessage"));
     }
 
     public void showAllShipsPlacedMessage() {
-        JOptionPane.showMessageDialog(this, "All ships placed! Click Start Game To Play!!");
+        JOptionPane.showMessageDialog(this, bundle.getString("showAllShipsPlacedMessage"));
     }
 
     public void showCannotPlaceShipMessage() {
-        JOptionPane.showMessageDialog(this, "Cannot place ship here!");
+        JOptionPane.showMessageDialog(this, bundle.getString("showCannotPlaceShipMessage"));
     }
 
     public void showVictoryMessage() {
-        JOptionPane.showMessageDialog(this, "Victory! You have won the game of Battleship!");
+        JOptionPane.showMessageDialog(this, bundle.getString("showVictoryMessage"));
     }
 
     public void showLossMessage() {
-        JOptionPane.showMessageDialog(this, "Computer has sunk all of your ships. You lost!");
+        JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
     }
 
     public void showCannotGoTwiceMessage() {
-        JOptionPane.showMessageDialog(this, "Cannot go twice! Please click End Turn button to end your turn.");
+        JOptionPane.showMessageDialog(this, bundle.getString("showCannotGoTwiceMessage"));
+    }
+    public void exitGame() {
+    	System.exit(0);
     }
 }

@@ -61,8 +61,38 @@ public class GameUi extends JFrame {
     private ResourceBundle bundle;
 
     public GameUi() {
-        initializeUI();
+    	initializeComponents();
         loadImages();
+        changeLocale(Locale.ENGLISH);
+        initializeUI();
+    }
+    
+    private void initializeComponents() {
+        gameMenu = new JMenu();
+        pveItem = new JMenuItem();
+        pvpItem = new JMenuItem();
+        restartItem = new JMenuItem();
+        exitItem = new JMenuItem();
+        languageMenu = new JMenu();
+        englishItem = new JMenuItem();
+        chineseItem = new JMenuItem();
+        panel = new JPanel();
+        gridPanel = new JPanel();
+        gridButtons = new JButton[10][10];
+        computerGridButtons = new JButton[10][10];
+        rotateButton = new JButton();
+        startButton = new JButton();
+        endTurnButton = new JButton();
+        quitButton = new JButton();
+        leftPanel = new JPanel();
+        rightPanel = new JPanel();
+        gameRule = new JLabel();
+        chatPart = new JLabel();
+        yourShips1 = new JLabel();
+        yourShips2 = new JLabel();
+        yourShips3 = new JLabel();
+        yourShips4 = new JLabel();
+        yourShips5 = new JLabel();
     }
 
     private void initializeUI() {
@@ -193,7 +223,8 @@ public class GameUi extends JFrame {
         // Set initial text from the resource bundle
         updateText();
 
-    
+        // Add action listeners for language menu items
+
     }
 
     private void loadImages() {

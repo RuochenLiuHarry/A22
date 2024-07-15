@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"controller","l":"Controller"},{"p":"model","l":"Game"},{"p":"view","l":"GameUi"},{"p":"test","l":"Main"},{"l":"所有类和接口","u":"allclasses-index.html"}];updateSearchResults();

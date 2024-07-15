@@ -7,16 +7,36 @@ import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
 
+/**
+ * Controller class responsible for handling user interactions
+ * and managing the game state in the Battleship game.
+ */
 public class Controller {
+	 /**
+     * The user interface for the game.
+     */
     private GameUi gameUi;
+
+    /**
+     * The game logic and state.
+     */
     private Game game;
 
+    /**
+     * Constructs a Controller with the specified GameUi.
+     * 
+     * @param gameUi the GameUi instance to be used by the Controller
+     */
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
         initializeController();
     }
 
+    /**
+     * Initializes the Controller by setting up action listeners
+     * for various UI components.
+     */
     private void initializeController() {
         // PVE
         gameUi.getPveItem().addActionListener(e -> {
@@ -31,7 +51,9 @@ public class Controller {
 
         // Restart
         gameUi.getRestartItem().addActionListener(e -> {
-            // Handle restart logic here
+            game.resetGame();
+            gameUi.resetUI();
+            gameUi.showPveDialog();
         });
 
         // Exit
@@ -82,7 +104,7 @@ public class Controller {
                 game.disableGamePlay();
             } else {
                 // Use Timer for delay instead of Thread.sleep
-                Timer timer = new Timer(1500, new ActionListener() { // Orginal 1500
+                Timer timer = new Timer(1500, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         game.computerTurn();
@@ -94,3 +116,4 @@ public class Controller {
         });
     }
 }
+

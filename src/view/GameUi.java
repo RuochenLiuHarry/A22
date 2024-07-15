@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
@@ -16,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
@@ -208,10 +210,44 @@ public class GameUi extends JFrame {
      * Constructs a GameUi instance and initializes the UI components.
      */
     public GameUi() {
+        showSplashScreen("logo.png", 5000); // 5000 millisecond (5 seconds)
         initializeComponents();
         loadImages();
         changeLocale(Locale.ENGLISH);
         initializeUI();
+    }
+    
+    /**
+     * Displays a splash screen with the specified image for a specified duration.
+     *
+     * @param imagePath the path to the image file to be displayed
+     * @param duration the duration in milliseconds for which the splash screen is displayed
+     */
+    private void showSplashScreen(String imagePath, int duration) {
+        JWindow splashScreen = new JWindow();
+        ImageIcon imageIcon = new ImageIcon(imagePath);
+        JLabel imageLabel = new JLabel(imageIcon);
+
+        splashScreen.getContentPane().add(imageLabel, BorderLayout.CENTER);
+        splashScreen.pack();
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = splashScreen.getSize().width;
+        int height = splashScreen.getSize().height;
+        int x = (screenSize.width - width) / 2;
+        int y = (screenSize.height - height) / 2;
+        splashScreen.setLocation(x, y);
+
+        splashScreen.setVisible(true);
+
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        splashScreen.setVisible(false);
+        splashScreen.dispose();
     }
 
     /**

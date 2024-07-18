@@ -9,10 +9,9 @@ import java.util.ResourceBundle;
 public class GameUi extends JFrame {
     private JMenu gameMenu;
     private JMenu languageMenu;
-    private JMenu networkMenu;
     private JPanel panel;
     private JMenuItem pveItem;
-    private JMenuItem pvpItem;
+    private JMenu pvpItem;
     private JMenuItem restartItem;
     private JMenuItem exitItem;
     private JMenuItem englishItem;
@@ -86,7 +85,7 @@ public class GameUi extends JFrame {
     private void initializeComponents() {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
-        pvpItem = new JMenuItem();
+        pvpItem = new JMenu();
         restartItem = new JMenuItem();
         exitItem = new JMenuItem();
         languageMenu = new JMenu();
@@ -109,7 +108,6 @@ public class GameUi extends JFrame {
         yourShips3 = new JLabel();
         yourShips4 = new JLabel();
         yourShips5 = new JLabel();
-        networkMenu = new JMenu();
         hostItem = new JMenuItem();
         connectItem = new JMenuItem();
         disconnectItem = new JMenuItem();
@@ -127,7 +125,7 @@ public class GameUi extends JFrame {
         menuBar.add(gameMenu);
 
         pveItem = new JMenuItem();
-        pvpItem = new JMenuItem();
+        pvpItem = new JMenu();
         restartItem = new JMenuItem();
         exitItem = new JMenuItem();
 
@@ -145,15 +143,14 @@ public class GameUi extends JFrame {
         languageMenu.add(englishItem);
         languageMenu.add(chineseItem);
 
-        networkMenu = new JMenu(bundle.getString("networkMenu"));
         hostItem.setText(bundle.getString("hostItem"));
         connectItem.setText(bundle.getString("connectItem"));
         disconnectItem.setText(bundle.getString("disconnectItem"));
 
-        networkMenu.add(hostItem);
-        networkMenu.add(connectItem);
-        networkMenu.add(disconnectItem);
-        menuBar.add(networkMenu);
+        pvpItem.add(hostItem);
+        pvpItem.add(connectItem);
+        pvpItem.add(disconnectItem);
+
 
         panel = new JPanel();
         panel.setBackground(new Color(51, 204, 255));

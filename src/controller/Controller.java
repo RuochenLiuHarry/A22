@@ -4,29 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Locale;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import model.Game;
+import javax.swing.*;
+import model.*;
 import view.GameUi;
-import model.NetworkServer;
-import model.NetworkClient;
 
 public class Controller {
     private GameUi gameUi;
     private Game game;
     private String player1Name;
     private String player2Name;
-    private NetworkServer server;
-    private NetworkClient client;
+    private Network network;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
-        this.server = new NetworkServer();
-        this.client = new NetworkClient();
         initializeController();
     }
 
@@ -59,10 +50,12 @@ public class Controller {
         // Disconnect Game
         gameUi.getDisconnectItem().addActionListener(e -> {
             gameUi.showMessage("Disconnected");
-            try {
-                client.disconnect();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if (network != null) {
+                try {
+                    network.closeConnection();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -148,14 +141,18 @@ public class Controller {
 
         hostButton.addActionListener(e -> {
             player1Name = nameField.getText();
-            statusLabel.setText("Hosting on port " + portBox.getSelectedItem());
-            gameUi.showMessage("Player 1 (Host): " + player1Name);
+            int port = (int) portBox.getSelectedItem();
             try {
-                server.startServer((Integer) portBox.getSelectedItem());
+                Host host = new Host(port);
+                host.startServer();
+                network = new Network(host.getClientSocket());
+                gameUi.showMessage("Player 1 (Host): " + player1Name);
+                statusLabel.setText("Hosting on port " + port);
+                hostDialog.dispose();
             } catch (IOException ex) {
+                statusLabel.setText("Failed to host on port " + port);
                 ex.printStackTrace();
             }
-            hostDialog.dispose();
         });
 
         cancelButton.addActionListener(e -> hostDialog.dispose());
@@ -171,14 +168,19 @@ public class Controller {
 
         connectButton.addActionListener(e -> {
             player2Name = nameField.getText();
-            statusLabel.setText("Connected to " + addressField.getText() + ":" + portBox.getSelectedItem());
-            gameUi.showMessage("Player 2: " + player2Name);
+            String address = addressField.getText();
+            int port = (int) portBox.getSelectedItem();
             try {
-                client.connectToServer(addressField.getText(), (Integer) portBox.getSelectedItem());
+                Client client = new Client(address, port);
+                client.connectToServer();
+                network = new Network(client.getSocket());
+                gameUi.showMessage("Player 2: " + player2Name);
+                statusLabel.setText("Connected to " + address + ":" + port);
+                connectDialog.dispose();
             } catch (IOException ex) {
+                statusLabel.setText("Failed to connect to " + address + ":" + port);
                 ex.printStackTrace();
             }
-            connectDialog.dispose();
         });
 
         cancelButton.addActionListener(e -> connectDialog.dispose());

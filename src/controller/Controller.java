@@ -2,25 +2,31 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 import model.Game;
 import view.GameUi;
+import model.NetworkServer;
+import model.NetworkClient;
 
 public class Controller {
     private GameUi gameUi;
     private Game game;
     private String player1Name;
     private String player2Name;
+    private NetworkServer server;
+    private NetworkClient client;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
+        this.server = new NetworkServer();
+        this.client = new NetworkClient();
         initializeController();
     }
 
@@ -53,6 +59,11 @@ public class Controller {
         // Disconnect Game
         gameUi.getDisconnectItem().addActionListener(e -> {
             gameUi.showMessage("Disconnected");
+            try {
+                client.disconnect();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
 
         // Restart
@@ -139,6 +150,11 @@ public class Controller {
             player1Name = nameField.getText();
             statusLabel.setText("Hosting on port " + portBox.getSelectedItem());
             gameUi.showMessage("Player 1 (Host): " + player1Name);
+            try {
+                server.startServer((Integer) portBox.getSelectedItem());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             hostDialog.dispose();
         });
 
@@ -157,6 +173,11 @@ public class Controller {
             player2Name = nameField.getText();
             statusLabel.setText("Connected to " + addressField.getText() + ":" + portBox.getSelectedItem());
             gameUi.showMessage("Player 2: " + player2Name);
+            try {
+                client.connectToServer(addressField.getText(), (Integer) portBox.getSelectedItem());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             connectDialog.dispose();
         });
 

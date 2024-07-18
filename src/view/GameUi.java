@@ -29,13 +29,9 @@ public class GameUi extends JFrame {
     private JButton quitButton;
     private JPanel leftPanel;
     private JPanel rightPanel;
-    private JLabel gameRule;
+    private JTextArea gameLog;
+    private JScrollPane gameLogScrollPane;
     private JLabel chatPart;
-    private JLabel yourShips1;
-    private JLabel yourShips2;
-    private JLabel yourShips3;
-    private JLabel yourShips4;
-    private JLabel yourShips5;
     private ImageIcon bowEast;
     private ImageIcon bowNorth;
     private ImageIcon bowSouth;
@@ -101,13 +97,9 @@ public class GameUi extends JFrame {
         quitButton = new JButton();
         leftPanel = new JPanel();
         rightPanel = new JPanel();
-        gameRule = new JLabel();
+        gameLog = new JTextArea();
+        gameLogScrollPane = new JScrollPane(gameLog);
         chatPart = new JLabel();
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
         hostItem = new JMenuItem();
         connectItem = new JMenuItem();
         disconnectItem = new JMenuItem();
@@ -151,7 +143,6 @@ public class GameUi extends JFrame {
         pvpItem.add(connectItem);
         pvpItem.add(disconnectItem);
 
-
         panel = new JPanel();
         panel.setBackground(new Color(51, 204, 255));
         panel.setLayout(new BorderLayout());
@@ -189,32 +180,16 @@ public class GameUi extends JFrame {
         panel.add(gridPanel, BorderLayout.CENTER);
 
         // Left Panel
-        leftPanel = new JPanel();
+        leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(0, 51, 90));
         leftPanel.setPreferredSize(new Dimension(150, leftPanel.getPreferredSize().height));
-        leftPanel.setLayout(new GridLayout(6, 1));
-        gameRule = new JLabel();
-        gameRule.setForeground(Color.WHITE);
-        leftPanel.add(gameRule);
-
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
-
-        yourShips1.setForeground(Color.WHITE);
-        yourShips2.setForeground(Color.WHITE);
-        yourShips3.setForeground(Color.WHITE);
-        yourShips4.setForeground(Color.WHITE);
-        yourShips5.setForeground(Color.WHITE);
-
-        leftPanel.add(yourShips1);
-        leftPanel.add(yourShips2);
-        leftPanel.add(yourShips3);
-        leftPanel.add(yourShips4);
-        leftPanel.add(yourShips5);
-
+        gameLog.setEditable(false);
+        gameLog.setLineWrap(true);
+        gameLog.setWrapStyleWord(true);
+        gameLog.setForeground(Color.WHITE);
+        gameLog.setBackground(new Color(0, 51, 90));
+        gameLogScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        leftPanel.add(gameLogScrollPane, BorderLayout.CENTER);
         panel.add(leftPanel, BorderLayout.WEST);
 
         // Right Panel
@@ -246,7 +221,6 @@ public class GameUi extends JFrame {
 
         pack();
 
-        // Set initial text from the resource bundle
         updateText();
     }
 
@@ -277,11 +251,9 @@ public class GameUi extends JFrame {
         try {
             Locale.setDefault(locale);
             bundle = ResourceBundle.getBundle("MessagesBundle", locale);
-            System.out.println("Loaded resource bundle for locale: " + locale);
             updateText();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error loading resource bundle for locale: " + locale);
         }
     }
 
@@ -299,16 +271,9 @@ public class GameUi extends JFrame {
             startButton.setText(bundle.getString("startButton"));
             endTurnButton.setText(bundle.getString("endTurnButton"));
             quitButton.setText(bundle.getString("quitButton"));
-            gameRule.setText(bundle.getString("gameRule"));
             chatPart.setText(bundle.getString("chatPart"));
-            yourShips1.setText(bundle.getString("yourShips1"));
-            yourShips2.setText(bundle.getString("yourShips2"));
-            yourShips3.setText(bundle.getString("yourShips3"));
-            yourShips4.setText(bundle.getString("yourShips4"));
-            yourShips5.setText(bundle.getString("yourShips5"));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error updating text for locale: " + Locale.getDefault());
         }
     }
 
@@ -491,7 +456,8 @@ public class GameUi extends JFrame {
     }
 
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+        gameLog.append(message + "\n");
+        gameLog.setCaretPosition(gameLog.getDocument().getLength()); // Scroll to the bottom
     }
 
     public void showHostDialog(JDialog hostDialog) {

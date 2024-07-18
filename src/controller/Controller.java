@@ -7,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 import model.Game;
@@ -16,8 +15,8 @@ import view.GameUi;
 public class Controller {
     private GameUi gameUi;
     private Game game;
-    private JDialog hostDialog;
-    private JDialog connectDialog;
+    private String player1Name;
+    private String player2Name;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -34,21 +33,21 @@ public class Controller {
 
         // PVP
         gameUi.getPvpItem().addActionListener(e -> {
-            // Handle PVP logic here
+            // PVP logic here
         });
 
         // Host Game
         gameUi.getHostItem().addActionListener(e -> {
-            hostDialog = new JDialog(gameUi, "Host Game", true);
+            JDialog hostDialog = new JDialog(gameUi, "Host Game", true);
             gameUi.showHostDialog(hostDialog);
-            addHostDialogListeners();
+            addHostDialogListeners(hostDialog);
         });
 
         // Connect Game
         gameUi.getConnectItem().addActionListener(e -> {
-            connectDialog = new JDialog(gameUi, "Connect to Game", true);
+            JDialog connectDialog = new JDialog(gameUi, "Connect to Game", true);
             gameUi.showConnectDialog(connectDialog);
-            addConnectDialogListeners();
+            addConnectDialogListeners(connectDialog);
         });
 
         // Disconnect Game
@@ -91,60 +90,74 @@ public class Controller {
             if (game.getCurrentShipName() != null) {
                 gameUi.showPlaceAllShipsMessage();
             } else {
-                game.placeComputerShips();
-                gameUi.showComputerBoard();
-                gameUi.getStartButton().setEnabled(false);
-                game.enableGamePlay();
+                if (game.isPlayerTurn()) {
+                    gameUi.showMessage("Player 1 is ready!");
+                    game.setPlayerTurn(false);
+                    gameUi.getStartButton().setEnabled(false);
+                    gameUi.getEndTurnButton().setEnabled(true);
+                    gameUi.getRotateButton().setEnabled(false);
+                    gameUi.getEndTurnButton().setText("End Turn (Player 2)");
+                    gameUi.showMessage("Player 2, place your ships.");
+                    game.enableShipPlacement();
+                } else {
+                    gameUi.showMessage("Player 2 is ready! Player 1's turn.");
+                    game.setPlayerTurn(true);
+                    gameUi.getStartButton().setEnabled(false);
+                    gameUi.getEndTurnButton().setEnabled(true);
+                    gameUi.getRotateButton().setEnabled(false);
+                    game.enableGamePlay();
+                }
             }
         });
 
         // End Turn
         gameUi.getEndTurnButton().addActionListener(e -> {
-            if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
-            game.setPlayerTurn(false);
-            game.setHasPlayerMadeMove(false);
-            gameUi.showPlayerBoard();
-
-            if (game.checkVictory(game.getPlayerHits())) {
-                gameUi.showVictoryMessage();
-                game.disableGamePlay();
-            } else {
-                Timer timer = new Timer(1500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        game.computerTurn();
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
+            if (game.isPlayerTurn() && game.hasPlayerMadeMove()) {
+                game.setPlayerTurn(false);
+                game.setHasPlayerMadeMove(false);
+                gameUi.getEndTurnButton().setText("End Turn (Player 2)");
+                gameUi.showPlayerBoard();
+                gameUi.showMessage("Player 2's turn.");
+            } else if (!game.isPlayerTurn() && game.hasPlayerMadeMove()) {
+                game.setPlayerTurn(true);
+                game.setHasPlayerMadeMove(false);
+                gameUi.getEndTurnButton().setText("End Turn (Player 1)");
+                gameUi.showComputerBoard();
+                gameUi.showMessage("Player 1's turn.");
             }
         });
     }
 
-    private void addHostDialogListeners() {
-        JButton hostButton = (JButton) ((JPanel) hostDialog.getContentPane().getComponent(6)).getComponent(0);
-        JButton cancelButton = (JButton) ((JPanel) hostDialog.getContentPane().getComponent(7)).getComponent(0);
-        JLabel statusLabel = (JLabel) hostDialog.getContentPane().getComponent(5);
+    private void addHostDialogListeners(JDialog hostDialog) {
+        JButton hostButton = (JButton) hostDialog.getContentPane().getComponent(6);
+        JButton cancelButton = (JButton) hostDialog.getContentPane().getComponent(7);
+        JTextField nameField = (JTextField) hostDialog.getContentPane().getComponent(1);
         JComboBox<Integer> portBox = (JComboBox<Integer>) hostDialog.getContentPane().getComponent(3);
+        JLabel statusLabel = (JLabel) hostDialog.getContentPane().getComponent(5);
 
         hostButton.addActionListener(e -> {
+            player1Name = nameField.getText();
             statusLabel.setText("Hosting on port " + portBox.getSelectedItem());
-            // Implement hosting logic here
+            gameUi.showMessage("Player 1 (Host): " + player1Name);
+            hostDialog.dispose();
         });
 
         cancelButton.addActionListener(e -> hostDialog.dispose());
     }
 
-    private void addConnectDialogListeners() {
-        JButton connectButton = (JButton) ((JPanel) connectDialog.getContentPane().getComponent(8)).getComponent(0);
-        JButton cancelButton = (JButton) ((JPanel) connectDialog.getContentPane().getComponent(9)).getComponent(0);
-        JLabel statusLabel = (JLabel) connectDialog.getContentPane().getComponent(7);
+    private void addConnectDialogListeners(JDialog connectDialog) {
+        JButton connectButton = (JButton) connectDialog.getContentPane().getComponent(8);
+        JButton cancelButton = (JButton) connectDialog.getContentPane().getComponent(9);
+        JTextField nameField = (JTextField) connectDialog.getContentPane().getComponent(1);
         JTextField addressField = (JTextField) connectDialog.getContentPane().getComponent(3);
         JComboBox<Integer> portBox = (JComboBox<Integer>) connectDialog.getContentPane().getComponent(5);
+        JLabel statusLabel = (JLabel) connectDialog.getContentPane().getComponent(7);
 
         connectButton.addActionListener(e -> {
+            player2Name = nameField.getText();
             statusLabel.setText("Connected to " + addressField.getText() + ":" + portBox.getSelectedItem());
-            // Implement connection logic here
+            gameUi.showMessage("Player 2: " + player2Name);
+            connectDialog.dispose();
         });
 
         cancelButton.addActionListener(e -> connectDialog.dispose());

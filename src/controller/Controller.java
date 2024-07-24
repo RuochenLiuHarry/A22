@@ -37,14 +37,12 @@ public class Controller {
         gameUi.getHostItem().addActionListener(e -> {
             JDialog hostDialog = new JDialog(gameUi, "Host Game", true);
             gameUi.showHostDialog(hostDialog);
-            addHostDialogListeners(hostDialog);
         });
 
         // Connect Game
         gameUi.getConnectItem().addActionListener(e -> {
             JDialog connectDialog = new JDialog(gameUi, "Connect to Game", true);
             gameUi.showConnectDialog(connectDialog);
-            addConnectDialogListeners(connectDialog);
         });
 
         // Disconnect Game
@@ -130,59 +128,5 @@ public class Controller {
                 gameUi.showMessage("Player 1's turn.");
             }
         });
-    }
-
-    private void addHostDialogListeners(JDialog hostDialog) {
-        JButton hostButton = (JButton) hostDialog.getContentPane().getComponent(6);
-        JButton cancelButton = (JButton) hostDialog.getContentPane().getComponent(7);
-        JTextField nameField = (JTextField) hostDialog.getContentPane().getComponent(1);
-        JComboBox<Integer> portBox = (JComboBox<Integer>) hostDialog.getContentPane().getComponent(3);
-        JLabel statusLabel = (JLabel) hostDialog.getContentPane().getComponent(5);
-
-        hostButton.addActionListener(e -> {
-            player1Name = nameField.getText();
-            int port = (int) portBox.getSelectedItem();
-            try {
-                Host host = new Host(port);
-                host.startServer();
-                network = new Network(host.getClientSocket());
-                gameUi.showMessage("Player 1 (Host): " + player1Name);
-                statusLabel.setText("Hosting on port " + port);
-                hostDialog.dispose();
-            } catch (IOException ex) {
-                statusLabel.setText("Failed to host on port " + port);
-                ex.printStackTrace();
-            }
-        });
-
-        cancelButton.addActionListener(e -> hostDialog.dispose());
-    }
-
-    private void addConnectDialogListeners(JDialog connectDialog) {
-        JButton connectButton = (JButton) connectDialog.getContentPane().getComponent(8);
-        JButton cancelButton = (JButton) connectDialog.getContentPane().getComponent(9);
-        JTextField nameField = (JTextField) connectDialog.getContentPane().getComponent(1);
-        JTextField addressField = (JTextField) connectDialog.getContentPane().getComponent(3);
-        JComboBox<Integer> portBox = (JComboBox<Integer>) connectDialog.getContentPane().getComponent(5);
-        JLabel statusLabel = (JLabel) connectDialog.getContentPane().getComponent(7);
-
-        connectButton.addActionListener(e -> {
-            player2Name = nameField.getText();
-            String address = addressField.getText();
-            int port = (int) portBox.getSelectedItem();
-            try {
-                Client client = new Client(address, port);
-                client.connectToServer();
-                network = new Network(client.getSocket());
-                gameUi.showMessage("Player 2: " + player2Name);
-                statusLabel.setText("Connected to " + address + ":" + port);
-                connectDialog.dispose();
-            } catch (IOException ex) {
-                statusLabel.setText("Failed to connect to " + address + ":" + port);
-                ex.printStackTrace();
-            }
-        });
-
-        cancelButton.addActionListener(e -> connectDialog.dispose());
     }
 }

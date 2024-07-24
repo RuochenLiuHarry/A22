@@ -2,7 +2,13 @@ package view;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import model.Client;
+import model.Host;
+import model.Network;
+
 import java.awt.*;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -485,6 +491,8 @@ public class GameUi extends JFrame {
         hostDialog.setLocationRelativeTo(this);
 
         hostDialog.setVisible(true);
+
+        addHostDialogListeners(hostDialog, nameField, portBox, statusLabel, hostButton, cancelButton);
     }
 
     public void showConnectDialog(JDialog connectDialog) {
@@ -516,5 +524,48 @@ public class GameUi extends JFrame {
         connectDialog.setLocationRelativeTo(this);
 
         connectDialog.setVisible(true);
+
+        addConnectDialogListeners(connectDialog, nameField, addressField, portBox, statusLabel, connectButton, cancelButton);
+    }
+
+    public void addHostDialogListeners(JDialog hostDialog, JTextField nameField, JComboBox<Integer> portBox, JLabel statusLabel, JButton hostButton, JButton cancelButton) {
+        hostButton.addActionListener(e -> {
+            String playerName = nameField.getText();
+            int port = (int) portBox.getSelectedItem();
+            try {
+                Host host = new Host(port);
+                host.startServer();
+                Network network = new Network(host.getClientSocket());
+                showMessage("Player 1 (Host): " + playerName);
+                statusLabel.setText("Hosting on port " + port);
+                hostDialog.dispose();
+            } catch (IOException ex) {
+                statusLabel.setText("Failed to host on port " + port);
+                ex.printStackTrace();
+            }
+        });
+
+        cancelButton.addActionListener(e -> hostDialog.dispose());
+    }
+
+    public void addConnectDialogListeners(JDialog connectDialog, JTextField nameField, JTextField addressField, JComboBox<Integer> portBox, JLabel statusLabel, JButton connectButton, JButton cancelButton) {
+        connectButton.addActionListener(e -> {
+            String playerName = nameField.getText();
+            String address = addressField.getText();
+            int port = (int) portBox.getSelectedItem();
+            try {
+                Client client = new Client(address, port);
+                client.connectToServer();
+                Network network = new Network(client.getSocket());
+                showMessage("Player 2: " + playerName);
+                statusLabel.setText("Connected to " + address + ":" + port);
+                connectDialog.dispose();
+            } catch (IOException ex) {
+                statusLabel.setText("Failed to connect to " + address + ":" + port);
+                ex.printStackTrace();
+            }
+        });
+
+        cancelButton.addActionListener(e -> connectDialog.dispose());
     }
 }

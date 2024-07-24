@@ -2,15 +2,11 @@ package view;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-
-import model.Client;
-import model.Host;
-import model.Network;
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import model.*;
 
 public class GameUi extends JFrame {
     private JMenu gameMenu;

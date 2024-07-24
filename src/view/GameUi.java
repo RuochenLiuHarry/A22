@@ -17,6 +17,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -27,123 +29,36 @@ import javax.swing.border.LineBorder;
 public class GameUi extends JFrame {
 
     private JMenu gameMenu;
-
     private JMenu languageMenu;
-
-
     private JPanel panel;
-
-
     private JMenuItem pveItem;
-
-
     private JMenuItem pvpItem;
-
     private JMenuItem restartItem;
-
-
     private JMenuItem exitItem;
-
     private JMenuItem englishItem;
-
     private JMenuItem chineseItem;
-
     private JPanel gridPanel;
-
     private JButton[][] gridButtons;
-
-
     private JPanel computerGridPanel;
-
     private JButton[][] computerGridButtons;
-
     private JButton rotateButton;
-
     private JButton startButton;
-
     private JButton endTurnButton;
-
     private JButton quitButton;
-    
     private JPanel leftPanel;
-
     private JPanel rightPanel;
-
-    private JLabel gameRule;
-
+    private JTextArea gameLog;
+    private JScrollPane gameLogScrollPane;
     private JLabel chatPart;
-
-    private JLabel yourShips1;
-
-    /**
-     * The label displaying the second ship's status.
-     */
-    private JLabel yourShips2;
-
-    /**
-     * The label displaying the third ship's status.
-     */
-    private JLabel yourShips3;
-
-    /**
-     * The label displaying the fourth ship's status.
-     */
-    private JLabel yourShips4;
-
-    /**
-     * The label displaying the fifth ship's status.
-     */
-    private JLabel yourShips5;
-
-    // Images for ships
-    /**
-     * The image icon for the bow of a ship facing east.
-     */
     private ImageIcon bowEast;
-
-    /**
-     * The image icon for the bow of a ship facing north.
-     */
     private ImageIcon bowNorth;
-
-    /**
-     * The image icon for the bow of a ship facing south.
-     */
     private ImageIcon bowSouth;
-
-    /**
-     * The image icon for the bow of a ship facing west.
-     */
     private ImageIcon bowWest;
-
-    /**
-     * The image icon for the middle hull of a ship placed horizontally.
-     */
     private ImageIcon midHullHoriz;
-
-    /**
-     * The image icon for the middle hull of a ship placed vertically.
-     */
     private ImageIcon midHullVert;
-
-    /**
-     * The image icon representing a hit on the board.
-     */
     private ImageIcon hitIcon;
-
-    /**
-     * The image icon representing a miss on the board.
-     */
     private ImageIcon missIcon;
-
-    /**
-     * The column labels for the game board.
-     */
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-
-    /**
-     * The resource bundle for internationalization.
-     */
     private ResourceBundle bundle;
 
     /**
@@ -212,13 +127,9 @@ public class GameUi extends JFrame {
         quitButton = new JButton();
         leftPanel = new JPanel();
         rightPanel = new JPanel();
-        gameRule = new JLabel();
+        gameLog = new JTextArea();
+        gameLogScrollPane = new JScrollPane(gameLog);
         chatPart = new JLabel();
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
     }
 
     /**
@@ -292,32 +203,16 @@ public class GameUi extends JFrame {
         panel.add(gridPanel, BorderLayout.CENTER);
 
         // Left Panel
-        leftPanel = new JPanel();
+        leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(0, 51, 90));
         leftPanel.setPreferredSize(new Dimension(150, leftPanel.getPreferredSize().height));
-        leftPanel.setLayout(new GridLayout(6, 1));
-        gameRule = new JLabel();
-        gameRule.setForeground(Color.WHITE);
-        leftPanel.add(gameRule);
-
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
-
-        yourShips1.setForeground(Color.WHITE);
-        yourShips2.setForeground(Color.WHITE);
-        yourShips3.setForeground(Color.WHITE);
-        yourShips4.setForeground(Color.WHITE);
-        yourShips5.setForeground(Color.WHITE);
-
-        leftPanel.add(yourShips1);
-        leftPanel.add(yourShips2);
-        leftPanel.add(yourShips3);
-        leftPanel.add(yourShips4);
-        leftPanel.add(yourShips5);
-
+        gameLog.setEditable(false);
+        gameLog.setLineWrap(true);
+        gameLog.setWrapStyleWord(true);
+        gameLog.setForeground(Color.WHITE);
+        gameLog.setBackground(new Color(0, 51, 90));
+        gameLogScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        leftPanel.add(gameLogScrollPane, BorderLayout.CENTER);
         panel.add(leftPanel, BorderLayout.WEST);
 
         // Right Panel
@@ -418,13 +313,7 @@ public class GameUi extends JFrame {
             startButton.setText(bundle.getString("startButton"));
             endTurnButton.setText(bundle.getString("endTurnButton"));
             quitButton.setText(bundle.getString("quitButton"));
-            gameRule.setText(bundle.getString("gameRule"));
             chatPart.setText(bundle.getString("chatPart"));
-            yourShips1.setText(bundle.getString("yourShips1"));
-            yourShips2.setText(bundle.getString("yourShips2"));
-            yourShips3.setText(bundle.getString("yourShips3"));
-            yourShips4.setText(bundle.getString("yourShips4"));
-            yourShips5.setText(bundle.getString("yourShips5"));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error updating text for locale: " + Locale.getDefault());
@@ -757,5 +646,15 @@ public class GameUi extends JFrame {
      */
     public void exitGame() {
         System.exit(0);
+    }
+
+    /**
+     * Displays a message in the game log.
+     * 
+     * @param message the message to be displayed
+     */
+    public void showMessage(String message) {
+        gameLog.append(message + "\n");
+        gameLog.setCaretPosition(gameLog.getDocument().getLength()); // Scroll to the bottom
     }
 }

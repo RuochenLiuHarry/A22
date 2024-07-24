@@ -21,26 +21,22 @@ import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-/**
- * GameUi class representing the user interface for the Battleship game.
- */
 public class GameUi extends JFrame {
 
     private JMenu gameMenu;
 
     private JMenu languageMenu;
 
-
     private JPanel panel;
-
 
     private JMenuItem pveItem;
 
-
-    private JMenuItem pvpItem;
+    private JMenu pvpMenu; // 修改为菜单
+    private JMenuItem hostItem;
+    private JMenuItem connectItem;
+    private JMenuItem disconnectItem;
 
     private JMenuItem restartItem;
-
 
     private JMenuItem exitItem;
 
@@ -51,7 +47,6 @@ public class GameUi extends JFrame {
     private JPanel gridPanel;
 
     private JButton[][] gridButtons;
-
 
     private JPanel computerGridPanel;
 
@@ -75,94 +70,44 @@ public class GameUi extends JFrame {
 
     private JLabel yourShips1;
 
-    /**
-     * The label displaying the second ship's status.
-     */
     private JLabel yourShips2;
 
-    /**
-     * The label displaying the third ship's status.
-     */
     private JLabel yourShips3;
 
-    /**
-     * The label displaying the fourth ship's status.
-     */
     private JLabel yourShips4;
 
-    /**
-     * The label displaying the fifth ship's status.
-     */
     private JLabel yourShips5;
 
-    // Images for ships
-    /**
-     * The image icon for the bow of a ship facing east.
-     */
     private ImageIcon bowEast;
 
-    /**
-     * The image icon for the bow of a ship facing north.
-     */
     private ImageIcon bowNorth;
 
-    /**
-     * The image icon for the bow of a ship facing south.
-     */
     private ImageIcon bowSouth;
 
-    /**
-     * The image icon for the bow of a ship facing west.
-     */
     private ImageIcon bowWest;
 
-    /**
-     * The image icon for the middle hull of a ship placed horizontally.
-     */
     private ImageIcon midHullHoriz;
 
-    /**
-     * The image icon for the middle hull of a ship placed vertically.
-     */
     private ImageIcon midHullVert;
 
-    /**
-     * The image icon representing a hit on the board.
-     */
     private ImageIcon hitIcon;
 
-    /**
-     * The image icon representing a miss on the board.
-     */
     private ImageIcon missIcon;
 
-    /**
-     * The column labels for the game board.
-     */
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
 
-    /**
-     * The resource bundle for internationalization.
-     */
     private ResourceBundle bundle;
 
-    /**
-     * Constructs a GameUi instance and initializes the UI components.
-     */
+
     public GameUi() {
-        showSplashScreen("logo.png", 5000); // 5000 millisecond (5 seconds)
+        showSplashScreen("logo.png", 5000);
         initializeComponents();
         loadImages();
         changeLocale(Locale.ENGLISH);
         initializeUI();
     }
     
-    /**
-     * Displays a splash screen with the specified image for a specified duration.
-     *
-     * @param imagePath the path to the image file to be displayed
-     * @param duration the duration in milliseconds for which the splash screen is displayed
-     */
+
     private void showSplashScreen(String imagePath, int duration) {
         JWindow splashScreen = new JWindow();
         ImageIcon imageIcon = new ImageIcon(imagePath);
@@ -196,7 +141,11 @@ public class GameUi extends JFrame {
     private void initializeComponents() {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
-        pvpItem = new JMenuItem();
+        pvpMenu = new JMenu();
+        pvpMenu = new JMenu();
+        hostItem = new JMenuItem();
+        connectItem = new JMenuItem();
+        disconnectItem = new JMenuItem();
         restartItem = new JMenuItem();
         exitItem = new JMenuItem();
         languageMenu = new JMenu();
@@ -237,12 +186,15 @@ public class GameUi extends JFrame {
         menuBar.add(gameMenu);
 
         pveItem = new JMenuItem();
-        pvpItem = new JMenuItem();
+        pvpMenu = new JMenu();
         restartItem = new JMenuItem();
         exitItem = new JMenuItem();
 
         gameMenu.add(pveItem);
-        gameMenu.add(pvpItem);
+        gameMenu.add(pvpMenu);
+        pvpMenu.add(hostItem);
+        pvpMenu.add(connectItem);
+        pvpMenu.add(disconnectItem);
         gameMenu.add(restartItem);
         gameMenu.add(exitItem);
 
@@ -365,9 +317,8 @@ public class GameUi extends JFrame {
             }
         }
 
-        // Reset UI elements if necessary
-        showPlayerBoard(); // Ensure the player's board is shown
-        getStartButton().setEnabled(true); // Enable the Start Game button
+        showPlayerBoard(); 
+        getStartButton().setEnabled(true);
     }
 
     /**
@@ -384,11 +335,7 @@ public class GameUi extends JFrame {
         missIcon = new ImageIcon(new ImageIcon("miss.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
     }
 
-    /**
-     * Changes the locale of the UI.
-     * 
-     * @param locale the new locale to be set
-     */
+
     public void changeLocale(Locale locale) {
         try {
             Locale.setDefault(locale);
@@ -401,14 +348,15 @@ public class GameUi extends JFrame {
         }
     }
 
-    /**
-     * Updates the text of the UI components based on the current locale.
-     */
+
     private void updateText() {
         try {
             gameMenu.setText(bundle.getString("gameMenu"));
             pveItem.setText(bundle.getString("pveItem"));
-            pvpItem.setText(bundle.getString("pvpItem"));
+            pvpMenu.setText(bundle.getString("pvpItem"));
+            hostItem.setText(bundle.getString("hostItem"));
+            connectItem.setText(bundle.getString("connectItem"));
+            disconnectItem.setText(bundle.getString("disconnectItem"));
             restartItem.setText(bundle.getString("restartItem"));
             exitItem.setText(bundle.getString("exitItem"));
             languageMenu.setText(bundle.getString("languageMenu"));
@@ -446,49 +394,27 @@ public class GameUi extends JFrame {
         JOptionPane.showMessageDialog(this, bundle.getString("showPveDialogMessage"));
     }
 
-    /**
-     * Displays a message indicating it is the player's turn.
-     */
+
     public void showYourTurn() {
         JOptionPane.showMessageDialog(this, bundle.getString("showYourTurnMessage"));
     }
 
-    /**
-     * Places a ship part at the specified coordinates.
-     * 
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     * @param icon the icon representing the ship part
-     */
+
     public void placeShipPart(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-    /**
-     * Marks the player's board at the specified coordinates.
-     * 
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     * @param icon the icon representing the hit or miss
-     */
+
     public void markPlayerBoard(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-    /**
-     * Marks the computer's board at the specified coordinates.
-     * 
-     * @param x the x-coordinate
-     * @param y the y-coordinate
-     * @param icon the icon representing the hit or miss
-     */
+
     public void markComputerBoard(int x, int y, ImageIcon icon) {
         computerGridButtons[x][y].setIcon(icon);
     }
 
-    /**
-     * Displays the computer's board.
-     */
+
     public void showComputerBoard() {
         panel.remove(gridPanel);
         computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
@@ -511,9 +437,7 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
-    /**
-     * Displays the player's board.
-     */
+
     public void showPlayerBoard() {
         panel.remove(computerGridPanel);
         panel.add(gridPanel, BorderLayout.CENTER);
@@ -521,240 +445,153 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
-    /**
-     * Gets the PVE menu item.
-     * 
-     * @return the PVE menu item
-     */
+
     public JMenuItem getPveItem() {
         return pveItem;
     }
 
-    /**
-     * Gets the PVP menu item.
-     * 
-     * @return the PVP menu item
-     */
-    public JMenuItem getPvpItem() {
-        return pvpItem;
+
+    public JMenu getPvpItem() {
+        return pvpMenu;
     }
 
-    /**
-     * Gets the Restart menu item.
-     * 
-     * @return the Restart menu item
-     */
+    public JMenuItem getHostItem() {
+        return hostItem;
+    }
+    
+    public JMenuItem getConnectItem() {
+        return connectItem;
+    }
+    
+    public JMenuItem getDisConnectItem() {
+        return disconnectItem;
+    }
+    
     public JMenuItem getRestartItem() {
         return restartItem;
     }
 
-    /**
-     * Gets the Exit menu item.
-     * 
-     * @return the Exit menu item
-     */
+
     public JMenuItem getExitItem() {
         return exitItem;
     }
 
-    /**
-     * Gets the English language menu item.
-     * 
-     * @return the English language menu item
-     */
+
     public JMenuItem getEnglishItem() {
         return englishItem;
     }
 
-    /**
-     * Gets the Chinese language menu item.
-     * 
-     * @return the Chinese language menu item
-     */
+
     public JMenuItem getChineseItem() {
         return chineseItem;
     }
 
-    /**
-     * Gets the Rotate button.
-     * 
-     * @return the Rotate button
-     */
+
     public JButton getRotateButton() {
         return rotateButton;
     }
 
-    /**
-     * Gets the Start button.
-     * 
-     * @return the Start button
-     */
+
     public JButton getStartButton() {
         return startButton;
     }
 
-    /**
-     * Gets the End Turn button.
-     * 
-     * @return the End Turn button
-     */
+
     public JButton getEndTurnButton() {
         return endTurnButton;
     }
 
-    /**
-     * Gets the Quit button.
-     * 
-     * @return the Quit button
-     */
+
     public JButton getQuitButton() {
         return quitButton;
     }
 
-    /**
-     * Gets the bow east icon.
-     * 
-     * @return the bow east icon
-     */
+
     public ImageIcon getBowEast() {
         return bowEast;
     }
 
-    /**
-     * Gets the bow north icon.
-     * 
-     * @return the bow north icon
-     */
+
     public ImageIcon getBowNorth() {
         return bowNorth;
     }
 
-    /**
-     * Gets the bow south icon.
-     * 
-     * @return the bow south icon
-     */
+
     public ImageIcon getBowSouth() {
         return bowSouth;
     }
 
-    /**
-     * Gets the bow west icon.
-     * 
-     * @return the bow west icon
-     */
+
     public ImageIcon getBowWest() {
         return bowWest;
     }
 
-    /**
-     * Gets the mid hull horizontal icon.
-     * 
-     * @return the mid hull horizontal icon
-     */
+
     public ImageIcon getMidHullHoriz() {
         return midHullHoriz;
     }
 
-    /**
-     * Gets the mid hull vertical icon.
-     * 
-     * @return the mid hull vertical icon
-     */
+
     public ImageIcon getMidHullVert() {
         return midHullVert;
     }
 
-    /**
-     * Gets the hit icon.
-     * 
-     * @return the hit icon
-     */
+
     public ImageIcon getHitIcon() {
         return hitIcon;
     }
 
-    /**
-     * Gets the miss icon.
-     * 
-     * @return the miss icon
-     */
+
     public ImageIcon getMissIcon() {
         return missIcon;
     }
 
-    /**
-     * Gets the grid buttons for the player's board.
-     * 
-     * @return the grid buttons for the player's board
-     */
+
     public JButton[][] getGridButtons() {
         return gridButtons;
     }
 
-    /**
-     * Gets the grid buttons for the computer's board.
-     * 
-     * @return the grid buttons for the computer's board
-     */
+
     public JButton[][] getComputerGridButtons() {
         return computerGridButtons;
     }
 
-    /**
-     * Displays a message indicating the current rotation of the ship.
-     * 
-     * @param isVertical true if the rotation is vertical, false otherwise
-     */
+
     public void showRotationMessage(boolean isVertical) {
         JOptionPane.showMessageDialog(this, bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
     }
 
-    /**
-     * Displays a message indicating all ships need to be placed.
-     */
+
     public void showPlaceAllShipsMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showPlaceAllShipsMessage"));
     }
 
-    /**
-     * Displays a message indicating all ships have been placed.
-     */
+
     public void showAllShipsPlacedMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showAllShipsPlacedMessage"));
     }
 
-    /**
-     * Displays a message indicating a ship cannot be placed.
-     */
+
     public void showCannotPlaceShipMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showCannotPlaceShipMessage"));
     }
 
-    /**
-     * Displays a victory message.
-     */
+
     public void showVictoryMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showVictoryMessage"));
     }
 
-    /**
-     * Displays a loss message.
-     */
+
     public void showLossMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
     }
 
-    /**
-     * Displays a message indicating a move cannot be made twice.
-     */
+    
     public void showCannotGoTwiceMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showCannotGoTwiceMessage"));
     }
 
-    /**
-     * Exits the game.
-     */
+
     public void exitGame() {
         System.exit(0);
     }

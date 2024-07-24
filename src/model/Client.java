@@ -15,6 +15,7 @@ public class Client {
 
     public void connectToServer() throws IOException {
         socket = new Socket(hostAddress, port);
+        System.out.println("Connected to server at " + hostAddress + ":" + port);
     }
 
     public Socket getSocket() {
@@ -24,6 +25,15 @@ public class Client {
     public void disconnect() throws IOException {
         if (socket != null && !socket.isClosed()) {
             socket.close();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            Client client = new Client("your-public-ip-address", 8080); // Replace with your server's public IP address and port
+            client.connectToServer();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

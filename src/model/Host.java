@@ -1,5 +1,3 @@
-package model;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,7 +13,9 @@ public class Host {
 
     public void startServer() throws IOException {
         serverSocket = new ServerSocket(port);
+        System.out.println("Server started on port: " + port);
         clientSocket = serverSocket.accept(); // This will wait until a client connects
+        System.out.println("Client connected from " + clientSocket.getInetAddress().getHostAddress());
     }
 
     public Socket getClientSocket() {
@@ -28,6 +28,15 @@ public class Host {
         }
         if (serverSocket != null && !serverSocket.isClosed()) {
             serverSocket.close();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            Host host = new Host(8080); // Replace with your desired port
+            host.startServer();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

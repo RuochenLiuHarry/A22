@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import model.*;
@@ -533,10 +534,22 @@ public class GameUi extends JFrame {
                 host.startServer();
                 Network network = new Network(host.getClientSocket());
                 showMessage("Player 1 (Host): " + playerName);
-                statusLabel.setText("Hosting on port " + port);
+                statusLabel.setText(bundle.getString("waitingStatus"));
+                
+                new Thread(() -> {
+                    try {
+                        Socket clientSocket = host.getClientSocket();
+                        if (clientSocket != null && clientSocket.isConnected()) {
+                            SwingUtilities.invokeLater(() -> statusLabel.setText(bundle.getString("connectedStatus")));
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }).start();
+                
                 hostDialog.dispose();
             } catch (IOException ex) {
-                statusLabel.setText("Failed to host on port " + port);
+                statusLabel.setText(bundle.getString("failedToHostStatus") + port);
                 ex.printStackTrace();
             }
         });
@@ -554,14 +567,15 @@ public class GameUi extends JFrame {
                 client.connectToServer();
                 Network network = new Network(client.getSocket());
                 showMessage("Player 2: " + playerName);
-                statusLabel.setText("Connected to " + address + ":" + port);
+                statusLabel.setText(bundle.getString("connectedStatus"));
                 connectDialog.dispose();
             } catch (IOException ex) {
-                statusLabel.setText("Failed to connect to " + address + ":" + port);
+                statusLabel.setText(bundle.getString("failedToConnectStatus") + address + ":" + port);
                 ex.printStackTrace();
             }
         });
 
         cancelButton.addActionListener(e -> connectDialog.dispose());
     }
+
 }

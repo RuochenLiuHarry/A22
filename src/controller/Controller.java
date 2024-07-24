@@ -37,24 +37,7 @@ public class Controller {
             // Handle PVP logic here
         });
 
-        // Host Game
-        gameUi.getHostItem().addActionListener(e -> {
-            hostDialog = new JDialog(gameUi, "Host Game", true);
-            gameUi.showHostDialog(hostDialog);
-            addHostDialogListeners();
-        });
-
-        // Connect Game
-        gameUi.getConnectItem().addActionListener(e -> {
-            connectDialog = new JDialog(gameUi, "Connect to Game", true);
-            gameUi.showConnectDialog(connectDialog);
-            addConnectDialogListeners();
-        });
-
-        // Disconnect Game
-        gameUi.getDisconnectItem().addActionListener(e -> {
-            gameUi.showMessage("Disconnected");
-        });
+        
 
         // Restart
         gameUi.getRestartItem().addActionListener(e -> {

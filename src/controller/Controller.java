@@ -2,18 +2,20 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Locale;
-import javax.swing.*;
-import model.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.Timer;
+import model.Game;
 import view.GameUi;
 
 public class Controller {
     private GameUi gameUi;
     private Game game;
-    private String player1Name;
-    private String player2Name;
-    private Network network;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -30,31 +32,7 @@ public class Controller {
 
         // PVP
         gameUi.getPvpItem().addActionListener(e -> {
-            // PVP logic here
-        });
-
-        // Host Game
-        gameUi.getHostItem().addActionListener(e -> {
-            JDialog hostDialog = new JDialog(gameUi, "Host Game", true);
-            gameUi.showHostDialog(hostDialog);
-        });
-
-        // Connect Game
-        gameUi.getConnectItem().addActionListener(e -> {
-            JDialog connectDialog = new JDialog(gameUi, "Connect to Game", true);
-            gameUi.showConnectDialog(connectDialog);
-        });
-
-        // Disconnect Game
-        gameUi.getDisconnectItem().addActionListener(e -> {
-            gameUi.showMessage("Disconnected");
-            if (network != null) {
-                try {
-                    network.closeConnection();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
+            // Handle PVP logic here
         });
 
         // Restart
@@ -92,41 +70,35 @@ public class Controller {
             if (game.getCurrentShipName() != null) {
                 gameUi.showPlaceAllShipsMessage();
             } else {
-                if (game.isPlayerTurn()) {
-                    gameUi.showMessage("Player 1 is ready!");
-                    game.setPlayerTurn(false);
-                    gameUi.getStartButton().setEnabled(false);
-                    gameUi.getEndTurnButton().setEnabled(true);
-                    gameUi.getRotateButton().setEnabled(false);
-                    gameUi.getEndTurnButton().setText("End Turn (Player 2)");
-                    gameUi.showMessage("Player 2, place your ships.");
-                    game.enableShipPlacement();
-                } else {
-                    gameUi.showMessage("Player 2 is ready! Player 1's turn.");
-                    game.setPlayerTurn(true);
-                    gameUi.getStartButton().setEnabled(false);
-                    gameUi.getEndTurnButton().setEnabled(true);
-                    gameUi.getRotateButton().setEnabled(false);
-                    game.enableGamePlay();
-                }
+                game.placeComputerShips();
+                gameUi.showComputerBoard();
+                gameUi.getStartButton().setEnabled(false);
+                game.enableGamePlay();
             }
         });
 
         // End Turn
         gameUi.getEndTurnButton().addActionListener(e -> {
-            if (game.isPlayerTurn() && game.hasPlayerMadeMove()) {
-                game.setPlayerTurn(false);
-                game.setHasPlayerMadeMove(false);
-                gameUi.getEndTurnButton().setText("End Turn (Player 2)");
-                gameUi.showPlayerBoard();
-                gameUi.showMessage("Player 2's turn.");
-            } else if (!game.isPlayerTurn() && game.hasPlayerMadeMove()) {
-                game.setPlayerTurn(true);
-                game.setHasPlayerMadeMove(false);
-                gameUi.getEndTurnButton().setText("End Turn (Player 1)");
-                gameUi.showComputerBoard();
-                gameUi.showMessage("Player 1's turn.");
+            if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
+            game.setPlayerTurn(false);
+            game.setHasPlayerMadeMove(false);
+            gameUi.showPlayerBoard();
+
+            if (game.checkVictory(game.getPlayerHits())) {
+                gameUi.showVictoryMessage();
+                game.disableGamePlay();
+            } else {
+                Timer timer = new Timer(1500, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        game.computerTurn();
+                    }
+                });
+                timer.setRepeats(false);
+                timer.start();
             }
         });
     }
+
+
 }

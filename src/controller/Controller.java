@@ -35,6 +35,7 @@ public class Controller {
         gameUi.getPveItem().addActionListener(e -> {
             gameUi.showPveDialog();
             game.enableShipPlacement();
+            gameUi.showMessage("Game mode: PVE");
         });
 
         // PVP

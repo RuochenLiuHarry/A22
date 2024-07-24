@@ -17,6 +17,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -31,7 +33,7 @@ public class GameUi extends JFrame {
 
     private JMenuItem pveItem;
 
-    private JMenu pvpMenu; // 修改为菜单
+    private JMenu pvpMenu; // Modified to a menu
     private JMenuItem hostItem;
     private JMenuItem connectItem;
     private JMenuItem disconnectItem;
@@ -62,21 +64,12 @@ public class GameUi extends JFrame {
     
     private JPanel leftPanel;
 
+    private JScrollPane leftPanelScrollPane;
+    private JTextArea gameLog; // New component for the game log
+
     private JPanel rightPanel;
 
-    private JLabel gameRule;
-
     private JLabel chatPart;
-
-    private JLabel yourShips1;
-
-    private JLabel yourShips2;
-
-    private JLabel yourShips3;
-
-    private JLabel yourShips4;
-
-    private JLabel yourShips5;
 
     private ImageIcon bowEast;
 
@@ -142,7 +135,6 @@ public class GameUi extends JFrame {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
         pvpMenu = new JMenu();
-        pvpMenu = new JMenu();
         hostItem = new JMenuItem();
         connectItem = new JMenuItem();
         disconnectItem = new JMenuItem();
@@ -161,13 +153,9 @@ public class GameUi extends JFrame {
         quitButton = new JButton();
         leftPanel = new JPanel();
         rightPanel = new JPanel();
-        gameRule = new JLabel();
+        gameLog = new JTextArea();
+        leftPanelScrollPane = new JScrollPane(gameLog);
         chatPart = new JLabel();
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
     }
 
     /**
@@ -244,31 +232,17 @@ public class GameUi extends JFrame {
         panel.add(gridPanel, BorderLayout.CENTER);
 
         // Left Panel
-        leftPanel = new JPanel();
+        leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(0, 51, 90));
         leftPanel.setPreferredSize(new Dimension(150, leftPanel.getPreferredSize().height));
-        leftPanel.setLayout(new GridLayout(6, 1));
-        gameRule = new JLabel();
-        gameRule.setForeground(Color.WHITE);
-        leftPanel.add(gameRule);
-
-        yourShips1 = new JLabel();
-        yourShips2 = new JLabel();
-        yourShips3 = new JLabel();
-        yourShips4 = new JLabel();
-        yourShips5 = new JLabel();
-
-        yourShips1.setForeground(Color.WHITE);
-        yourShips2.setForeground(Color.WHITE);
-        yourShips3.setForeground(Color.WHITE);
-        yourShips4.setForeground(Color.WHITE);
-        yourShips5.setForeground(Color.WHITE);
-
-        leftPanel.add(yourShips1);
-        leftPanel.add(yourShips2);
-        leftPanel.add(yourShips3);
-        leftPanel.add(yourShips4);
-        leftPanel.add(yourShips5);
+        
+        gameLog.setEditable(false);
+        gameLog.setLineWrap(true);
+        gameLog.setWrapStyleWord(true);
+        gameLog.setForeground(Color.WHITE);
+        gameLog.setBackground(new Color(0, 51, 90));
+        leftPanelScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        leftPanel.add(leftPanelScrollPane, BorderLayout.CENTER);
 
         panel.add(leftPanel, BorderLayout.WEST);
 
@@ -366,13 +340,7 @@ public class GameUi extends JFrame {
             startButton.setText(bundle.getString("startButton"));
             endTurnButton.setText(bundle.getString("endTurnButton"));
             quitButton.setText(bundle.getString("quitButton"));
-            gameRule.setText(bundle.getString("gameRule"));
             chatPart.setText(bundle.getString("chatPart"));
-            yourShips1.setText(bundle.getString("yourShips1"));
-            yourShips2.setText(bundle.getString("yourShips2"));
-            yourShips3.setText(bundle.getString("yourShips3"));
-            yourShips4.setText(bundle.getString("yourShips4"));
-            yourShips5.setText(bundle.getString("yourShips5"));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error updating text for locale: " + Locale.getDefault());
@@ -391,12 +359,12 @@ public class GameUi extends JFrame {
      * Displays the PVE dialog.
      */
     public void showPveDialog() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showPveDialogMessage"));
+        showMessage(bundle.getString("showPveDialogMessage"));
     }
 
 
     public void showYourTurn() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showYourTurnMessage"));
+        showMessage(bundle.getString("showYourTurnMessage"));
     }
 
 
@@ -558,41 +526,51 @@ public class GameUi extends JFrame {
 
 
     public void showRotationMessage(boolean isVertical) {
-        JOptionPane.showMessageDialog(this, bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
+        showMessage(bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
     }
 
 
     public void showPlaceAllShipsMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showPlaceAllShipsMessage"));
+        showMessage(bundle.getString("showPlaceAllShipsMessage"));
     }
 
 
     public void showAllShipsPlacedMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showAllShipsPlacedMessage"));
+        showMessage(bundle.getString("showAllShipsPlacedMessage"));
     }
 
 
     public void showCannotPlaceShipMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showCannotPlaceShipMessage"));
+        showMessage(bundle.getString("showCannotPlaceShipMessage"));
     }
 
 
     public void showVictoryMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showVictoryMessage"));
+        showMessage(bundle.getString("showVictoryMessage"));
     }
 
 
     public void showLossMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
+        showMessage(bundle.getString("showLossMessage"));
     }
 
     
     public void showCannotGoTwiceMessage() {
-        JOptionPane.showMessageDialog(this, bundle.getString("showCannotGoTwiceMessage"));
+        showMessage(bundle.getString("showCannotGoTwiceMessage"));
     }
 
 
     public void exitGame() {
         System.exit(0);
+    }
+
+    /**
+     * Displays a message in the game log.
+     * 
+     * @param message the message to be displayed
+     */
+    public void showMessage(String message) {
+        gameLog.append(message + "\n");
+        gameLog.setCaretPosition(gameLog.getDocument().getLength()); // Scroll to the bottom
     }
 }

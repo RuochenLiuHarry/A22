@@ -25,114 +25,54 @@ import javax.swing.border.LineBorder;
  * GameUi class representing the user interface for the Battleship game.
  */
 public class GameUi extends JFrame {
-	/**
-     * The game menu containing various game options.
-     */
+
     private JMenu gameMenu;
 
-    /**
-     * The language menu for selecting the application's language.
-     */
     private JMenu languageMenu;
 
-    /**
-     * The main panel containing all other components.
-     */
+
     private JPanel panel;
 
-    /**
-     * The menu item for starting a Player vs Environment game.
-     */
+
     private JMenuItem pveItem;
 
-    /**
-     * The menu item for starting a Player vs Player game.
-     */
+
     private JMenuItem pvpItem;
 
-    /**
-     * The menu item for restarting the game.
-     */
     private JMenuItem restartItem;
 
-    /**
-     * The menu item for exiting the game.
-     */
+
     private JMenuItem exitItem;
 
-    /**
-     * The menu item for switching the language to English.
-     */
     private JMenuItem englishItem;
 
-    /**
-     * The menu item for switching the language to Chinese.
-     */
     private JMenuItem chineseItem;
 
-    /**
-     * The panel containing the player's grid of buttons.
-     */
     private JPanel gridPanel;
 
-    /**
-     * The grid of buttons representing the player's board.
-     */
     private JButton[][] gridButtons;
 
-    /**
-     * The panel containing the computer's grid of buttons.
-     */
+
     private JPanel computerGridPanel;
 
-    /**
-     * The grid of buttons representing the computer's board.
-     */
     private JButton[][] computerGridButtons;
 
-    /**
-     * The button for rotating the ship being placed.
-     */
     private JButton rotateButton;
 
-    /**
-     * The button for starting the game after ship placement.
-     */
     private JButton startButton;
 
-    /**
-     * The button for ending the player's turn.
-     */
     private JButton endTurnButton;
 
-    /**
-     * The button for quitting the game.
-     */
     private JButton quitButton;
-
-    /**
-     * The panel on the left side of the main panel, typically used for game rules or player information.
-     */
+    
     private JPanel leftPanel;
 
-    /**
-     * The panel on the right side of the main panel, typically used for chat or additional information.
-     */
     private JPanel rightPanel;
 
-    /**
-     * The label displaying the game rules.
-     */
     private JLabel gameRule;
 
-    /**
-     * The label for the chat part of the UI.
-     */
     private JLabel chatPart;
 
-    /**
-     * The label displaying the first ship's status.
-     */
     private JLabel yourShips1;
 
     /**

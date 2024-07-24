@@ -16,8 +16,6 @@ import view.GameUi;
 public class Controller {
     private GameUi gameUi;
     private Game game;
-    private JDialog hostDialog;
-    private JDialog connectDialog;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -36,9 +34,6 @@ public class Controller {
         gameUi.getPvpItem().addActionListener(e -> {
             // Handle PVP logic here
         });
-
-        // Host Game
-
 
         // Restart
         gameUi.getRestartItem().addActionListener(e -> {

@@ -12,14 +12,7 @@ import view.GameUi;
  * and managing the game state in the Battleship game.
  */
 public class Controller {
-	 /**
-     * The user interface for the game.
-     */
     private GameUi gameUi;
-
-    /**
-     * The game logic and state.
-     */
     private Game game;
 
     /**
@@ -42,6 +35,7 @@ public class Controller {
         gameUi.getPveItem().addActionListener(e -> {
             gameUi.showPveDialog();
             game.enableShipPlacement();
+            gameUi.showMessage("Game mode: PVE");
         });
 
         // PVP
@@ -116,5 +110,3 @@ public class Controller {
         });
     }
 }
-
-

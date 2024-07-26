@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -26,71 +27,42 @@ import javax.swing.border.LineBorder;
 public class GameUi extends JFrame {
 
     private JMenu gameMenu;
-
     private JMenu languageMenu;
-
     private JPanel panel;
-
     private JMenuItem pveItem;
-
     private JMenu pvpMenu; // Modified to a menu
     private JMenuItem hostItem;
     private JMenuItem connectItem;
     private JMenuItem disconnectItem;
-
     private JMenuItem restartItem;
-
     private JMenuItem exitItem;
-
     private JMenuItem englishItem;
-
     private JMenuItem chineseItem;
-
     private JPanel gridPanel;
-
     private JButton[][] gridButtons;
-
     private JPanel computerGridPanel;
-
     private JButton[][] computerGridButtons;
-
     private JButton rotateButton;
-
     private JButton startButton;
-
     private JButton endTurnButton;
-
     private JButton quitButton;
-    
     private JPanel leftPanel;
-
     private JScrollPane leftPanelScrollPane;
     private JTextArea gameLog; // New component for the game log
-
     private JPanel rightPanel;
-
-    private JLabel chatPart;
-
+    private JTextArea chatArea; // Chat area for displaying messages
+    private JTextField chatInput; // Chat input field for typing messages
+    private JScrollPane chatScrollPane;
     private ImageIcon bowEast;
-
     private ImageIcon bowNorth;
-
     private ImageIcon bowSouth;
-
     private ImageIcon bowWest;
-
     private ImageIcon midHullHoriz;
-
     private ImageIcon midHullVert;
-
     private ImageIcon hitIcon;
-
     private ImageIcon missIcon;
-
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-
     private ResourceBundle bundle;
-
 
     public GameUi() {
         showSplashScreen("logo.png", 5000);
@@ -99,7 +71,6 @@ public class GameUi extends JFrame {
         changeLocale(Locale.ENGLISH);
         initializeUI();
     }
-    
 
     private void showSplashScreen(String imagePath, int duration) {
         JWindow splashScreen = new JWindow();
@@ -155,7 +126,9 @@ public class GameUi extends JFrame {
         rightPanel = new JPanel();
         gameLog = new JTextArea();
         leftPanelScrollPane = new JScrollPane(gameLog);
-        chatPart = new JLabel();
+        chatArea = new JTextArea(); // Chat area for displaying messages
+        chatInput = new JTextField(); // Chat input field for typing messages
+        chatScrollPane = new JScrollPane(chatArea);
     }
 
     /**
@@ -246,13 +219,22 @@ public class GameUi extends JFrame {
 
         panel.add(leftPanel, BorderLayout.WEST);
 
-        // Right Panel
-        rightPanel = new JPanel();
+        // Right Panel for chat system
+        rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(new Color(0, 51, 90));
         rightPanel.setPreferredSize(new Dimension(150, rightPanel.getPreferredSize().height));
-        chatPart = new JLabel();
-        chatPart.setForeground(Color.WHITE);
-        rightPanel.add(chatPart);
+        
+        chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+        chatArea.setForeground(Color.WHITE);
+        chatArea.setBackground(new Color(0, 51, 90));
+        chatScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        rightPanel.add(chatScrollPane, BorderLayout.CENTER);
+
+        chatInput.setBackground(Color.WHITE); // Set chat input background to white
+        rightPanel.add(chatInput, BorderLayout.SOUTH);
+
         panel.add(rightPanel, BorderLayout.EAST);
 
         JPanel bottomPanel = new JPanel(new GridLayout(1, 4, 10, 0));
@@ -309,7 +291,6 @@ public class GameUi extends JFrame {
         missIcon = new ImageIcon(new ImageIcon("miss.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
     }
 
-
     public void changeLocale(Locale locale) {
         try {
             Locale.setDefault(locale);
@@ -321,7 +302,6 @@ public class GameUi extends JFrame {
             System.out.println("Error loading resource bundle for locale: " + locale);
         }
     }
-
 
     private void updateText() {
         try {
@@ -340,7 +320,6 @@ public class GameUi extends JFrame {
             startButton.setText(bundle.getString("startButton"));
             endTurnButton.setText(bundle.getString("endTurnButton"));
             quitButton.setText(bundle.getString("quitButton"));
-            chatPart.setText(bundle.getString("chatPart"));
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error updating text for locale: " + Locale.getDefault());
@@ -362,26 +341,21 @@ public class GameUi extends JFrame {
         showMessage(bundle.getString("showPveDialogMessage"));
     }
 
-
     public void showYourTurn() {
         showMessage(bundle.getString("showYourTurnMessage"));
     }
-
 
     public void placeShipPart(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-
     public void markPlayerBoard(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
-
     public void markComputerBoard(int x, int y, ImageIcon icon) {
         computerGridButtons[x][y].setIcon(icon);
     }
-
 
     public void showComputerBoard() {
         panel.remove(gridPanel);
@@ -405,7 +379,6 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
-
     public void showPlayerBoard() {
         panel.remove(computerGridPanel);
         panel.add(gridPanel, BorderLayout.CENTER);
@@ -413,11 +386,9 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
-
     public JMenuItem getPveItem() {
         return pveItem;
     }
-
 
     public JMenu getPvpItem() {
         return pvpMenu;
@@ -426,139 +397,118 @@ public class GameUi extends JFrame {
     public JMenuItem getHostItem() {
         return hostItem;
     }
-    
+
     public JMenuItem getConnectItem() {
         return connectItem;
     }
-    
+
     public JMenuItem getDisConnectItem() {
         return disconnectItem;
     }
-    
+
     public JMenuItem getRestartItem() {
         return restartItem;
     }
-
 
     public JMenuItem getExitItem() {
         return exitItem;
     }
 
-
     public JMenuItem getEnglishItem() {
         return englishItem;
     }
-
 
     public JMenuItem getChineseItem() {
         return chineseItem;
     }
 
-
     public JButton getRotateButton() {
         return rotateButton;
     }
-
 
     public JButton getStartButton() {
         return startButton;
     }
 
-
     public JButton getEndTurnButton() {
         return endTurnButton;
     }
-
 
     public JButton getQuitButton() {
         return quitButton;
     }
 
-
     public ImageIcon getBowEast() {
         return bowEast;
     }
-
 
     public ImageIcon getBowNorth() {
         return bowNorth;
     }
 
-
     public ImageIcon getBowSouth() {
         return bowSouth;
     }
-
 
     public ImageIcon getBowWest() {
         return bowWest;
     }
 
-
     public ImageIcon getMidHullHoriz() {
         return midHullHoriz;
     }
-
 
     public ImageIcon getMidHullVert() {
         return midHullVert;
     }
 
-
     public ImageIcon getHitIcon() {
         return hitIcon;
     }
-
 
     public ImageIcon getMissIcon() {
         return missIcon;
     }
 
-
     public JButton[][] getGridButtons() {
         return gridButtons;
     }
-
 
     public JButton[][] getComputerGridButtons() {
         return computerGridButtons;
     }
 
+    public JTextField getChatInput() {
+        return chatInput;
+    }
 
     public void showRotationMessage(boolean isVertical) {
         showMessage(bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
     }
 
-
     public void showPlaceAllShipsMessage() {
         showMessage(bundle.getString("showPlaceAllShipsMessage"));
     }
-
 
     public void showAllShipsPlacedMessage() {
         showMessage(bundle.getString("showAllShipsPlacedMessage"));
     }
 
-
     public void showCannotPlaceShipMessage() {
         showMessage(bundle.getString("showCannotPlaceShipMessage"));
     }
 
-
     public void showVictoryMessage() {
-        showMessage(bundle.getString("showVictoryMessage"));
+        JOptionPane.showMessageDialog(this, bundle.getString("showVictoryMessage"));
     }
-
 
     public void showLossMessage() {
-        showMessage(bundle.getString("showLossMessage"));
+        JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
     }
 
-    
     public void showCannotGoTwiceMessage() {
         showMessage(bundle.getString("showCannotGoTwiceMessage"));
     }
-
 
     public void exitGame() {
         System.exit(0);
@@ -572,5 +522,15 @@ public class GameUi extends JFrame {
     public void showMessage(String message) {
         gameLog.append(message + "\n");
         gameLog.setCaretPosition(gameLog.getDocument().getLength()); // Scroll to the bottom
+    }
+
+    /**
+     * Displays a chat message in the chat area.
+     * 
+     * @param message the message to be displayed
+     */
+    public void showChatMessage(String message) {
+        chatArea.append(message + "\n");
+        chatArea.setCaretPosition(chatArea.getDocument().getLength()); // Scroll to the bottom
     }
 }

@@ -99,9 +99,6 @@ public class GameUi extends JFrame {
         splashScreen.dispose();
     }
 
-    /**
-     * Initializes the UI components.
-     */
     private void initializeComponents() {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
@@ -126,19 +123,15 @@ public class GameUi extends JFrame {
         rightPanel = new JPanel();
         gameLog = new JTextArea();
         leftPanelScrollPane = new JScrollPane(gameLog);
-        chatArea = new JTextArea(); // Chat area for displaying messages
-        chatInput = new JTextField(); // Chat input field for typing messages
+        chatArea = new JTextArea();
+        chatInput = new JTextField();
         chatScrollPane = new JScrollPane(chatArea);
     }
 
-    /**
-     * Initializes the user interface.
-     */
     private void initializeUI() {
         setTitle("Battleship");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Set default locale and resource bundle
         changeLocale(Locale.ENGLISH);
 
         JMenuBar menuBar = new JMenuBar();
@@ -257,15 +250,10 @@ public class GameUi extends JFrame {
 
         pack();
 
-        // Set initial text from the resource bundle
         updateText();
     }
     
-    /**
-     * Resets the UI by clearing ship and hit/miss icons from the boards.
-     */
     public void resetUI() {
-        // Clear all ship and hit/miss icons from the player and computer boards
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 gridButtons[i][j].setIcon(null);
@@ -277,9 +265,6 @@ public class GameUi extends JFrame {
         getStartButton().setEnabled(true);
     }
 
-    /**
-     * Loads images for the ships.
-     */
     private void loadImages() {
         bowEast = new ImageIcon(new ImageIcon("bow_east.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
         bowNorth = new ImageIcon(new ImageIcon("bow_north.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
@@ -326,17 +311,11 @@ public class GameUi extends JFrame {
         }
     }
 
-    /**
-     * Displays the main menu.
-     */
     public void showMenu() {
         setVisible(true);
         JOptionPane.showMessageDialog(this, bundle.getString("showMenuMessage"));
     }
 
-    /**
-     * Displays the PVE dialog.
-     */
     public void showPveDialog() {
         showMessage(bundle.getString("showPveDialogMessage"));
     }
@@ -514,23 +493,13 @@ public class GameUi extends JFrame {
         System.exit(0);
     }
 
-    /**
-     * Displays a message in the game log.
-     * 
-     * @param message the message to be displayed
-     */
     public void showMessage(String message) {
         gameLog.append(message + "\n");
-        gameLog.setCaretPosition(gameLog.getDocument().getLength()); // Scroll to the bottom
+        gameLog.setCaretPosition(gameLog.getDocument().getLength());
     }
 
-    /**
-     * Displays a chat message in the chat area.
-     * 
-     * @param message the message to be displayed
-     */
     public void showChatMessage(String message) {
         chatArea.append(message + "\n");
-        chatArea.setCaretPosition(chatArea.getDocument().getLength()); // Scroll to the bottom
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 }

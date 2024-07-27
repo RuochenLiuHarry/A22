@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 import javax.swing.Timer;
+import javax.swing.JTextField;
 import model.Game;
 import view.GameUi;
 
@@ -106,6 +107,16 @@ public class Controller {
                 });
                 timer.setRepeats(false);
                 timer.start();
+            }
+        });
+
+        // Chat input
+        gameUi.getChatInput().addActionListener(e -> {
+            JTextField chatInput = gameUi.getChatInput();
+            String message = chatInput.getText();
+            if (!message.trim().isEmpty()) {
+                gameUi.showChatMessage("Player: " + message);
+                chatInput.setText(""); // Clear the chat input field
             }
         });
     }

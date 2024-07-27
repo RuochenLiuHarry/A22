@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import javax.swing.JOptionPane;
 import controller.Controller;
 import view.CustomDialog;
 import view.GameUi;
@@ -83,6 +82,9 @@ public class Network extends Thread {
                 String chatMessage = parts[1];
                 controller.showChatMessage(chatMessage);
                 break;
+            case "CLIENT_CONNECTED":
+                gameUi.showMessage("A client has connected.");
+                break;
         }
     }
 
@@ -118,6 +120,7 @@ public class Network extends Thread {
             client.connect(address, port, controller, gameUi);
             gameUi.showMessage("Connected to host.");
             client.getNetwork().sendMessage("USERNAME::" + dialog.getName());
+            client.getNetwork().sendMessage("CLIENT_CONNECTED::true"); // Send message to host indicating client has connected
         } catch (IOException e) {
             e.printStackTrace();
             gameUi.showMessage("Failed to connect to host.");

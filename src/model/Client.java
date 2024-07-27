@@ -10,13 +10,19 @@ public class Client {
     private Network network;
 
     public void connect(String hostname, int port, Controller controller, GameUi gameUi) throws IOException {
-        socket = new Socket(hostname, port);
-        System.out.println("Connected to server: " + hostname + ":" + port);
-        network = new Network(socket, controller, gameUi);
-        network.start();
+        try {
+            socket = new Socket(hostname, port);
+            System.out.println("Connected to server: " + hostname + ":" + port);
+            network = new Network(socket, controller, gameUi);
+            network.start();
+        } catch (IOException e) {
+            System.err.println("Failed to connect to server: " + hostname + ":" + port);
+            e.printStackTrace();
+            throw e;
+        }
     }
 
-    public void disconnect() throws IOException {	
+    public void disconnect() throws IOException {    
         if (socket != null && !socket.isClosed()) {
             socket.close();
         }

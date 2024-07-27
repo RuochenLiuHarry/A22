@@ -1,6 +1,9 @@
 package model;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.JOptionPane;
 import controller.Controller;
@@ -9,6 +12,8 @@ import view.GameUi;
 
 public class Network extends Thread {
     private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
     private Controller controller;
     private GameUi gameUi;
 
@@ -21,19 +26,64 @@ public class Network extends Thread {
         this.socket = socket;
         this.controller = controller;
         this.gameUi = gameUi;
+        try {
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
-        // Implementation remains the same
+        try {
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                processMessage(inputLine);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendMessage(String message) {
-        // Implementation remains the same
+        out.println(message);
     }
 
     private void processMessage(String message) {
-        // Implementation remains the same
+        String[] parts = message.split("::");
+        String protocol = parts[0];
+
+        switch (protocol) {
+            case "READY":
+                boolean ready = Boolean.parseBoolean(parts[1]);
+                // Handle ready message
+                break;
+            case "USERNAME":
+                String username = parts[1];
+                // Process username message
+                break;
+            case "HIT":
+                boolean hit = Boolean.parseBoolean(parts[1]);
+                // Process hit result message
+                break;
+            case "SHOOT":
+                int x = Integer.parseInt(parts[1]);
+                int y = Integer.parseInt(parts[2]);
+                // Process shoot message
+                break;
+            case "GRESULT":
+                boolean win = Boolean.parseBoolean(parts[1]);
+                // Process game result message
+                break;
+            case "RESET":
+                // Process reset message
+                break;
+            case "CHAT":
+                String chatMessage = parts[1];
+                controller.showChatMessage(chatMessage);
+                break;
+        }
     }
 
     public void startHost() {

@@ -13,46 +13,26 @@ import view.GameUi;
 public class Game {
 
     private GameUi gameUi;
-
-
     private boolean[][] playerBoard;
-
- 
     private boolean[][] computerBoard;
-
-
     private boolean[][] playerBoardHits;
-
     private boolean[][] computerBoardHits;
-
     private List<String> shipNames;
-
     private List<Integer> shipLengths;
-
     private int currentShipIndex;
-
     private boolean isVertical;
-
     private boolean isPlayerTurn;
-
     private boolean hasPlayerMadeMove;
-
     private boolean isHunting;
-
     private int lastHitX;
-
     private int lastHitY;
-
+    private int lastMoveX; // New field
+    private int lastMoveY; // New field
     private List<int[]> availableMoves;
-
     private List<int[]> huntMoves;
-
     private boolean isFirstMove;
-
     private int playerHits;
-
     private int computerHits;
-
     private static final int TOTAL_SHIP_PARTS = 17;
 
     public Game(GameUi gameUi) {
@@ -64,7 +44,7 @@ public class Game {
         this.shipNames = new ArrayList<>();
         this.shipLengths = new ArrayList<>();
         this.currentShipIndex = 0;
-        this.isVertical = true; // Default rotation is vertical
+        this.isVertical = true;
         this.isPlayerTurn = true;
         this.hasPlayerMadeMove = false;
         this.isHunting = false;
@@ -79,33 +59,25 @@ public class Game {
     private void initializeShips() {
         shipNames.clear();
         shipLengths.clear();
-        
         shipNames.add("Carrier");
         shipLengths.add(5);
-
         shipNames.add("Cruiser");
         shipLengths.add(4);
-
         shipNames.add("Destroyer");
         shipLengths.add(3);
-
         shipNames.add("Missile Frigate");
         shipLengths.add(3);
-
         shipNames.add("Submarine");
         shipLengths.add(2);
     }
 
     public void resetGame() {
-        // Reset game boards
         playerBoard = new boolean[10][10];
         computerBoard = new boolean[10][10];
         playerBoardHits = new boolean[10][10];
         computerBoardHits = new boolean[10][10];
-
-        // Reset ship placement and game state
         currentShipIndex = 0;
-        isVertical = true; // Default rotation is vertical
+        isVertical = true;
         isPlayerTurn = true;
         hasPlayerMadeMove = false;
         isHunting = false;
@@ -114,8 +86,6 @@ public class Game {
         huntMoves = new ArrayList<>();
         playerHits = 0;
         computerHits = 0;
-
-        // Re-enable ship placement
         enableShipPlacement();
     }
 
@@ -129,7 +99,7 @@ public class Game {
                     if (placeShip(x, y)) {
                         if (getCurrentShipName() == null) {
                             gameUi.showAllShipsPlacedMessage();
-                            disableShipPlacement(); // Disable ship placement buttons
+                            disableShipPlacement();
                         }
                     } else {
                         gameUi.showCannotPlaceShipMessage();
@@ -241,6 +211,8 @@ public class Game {
 
     public void markHitOrMiss(int x, int y, boolean[][] hitsBoard, boolean isHit) {
         hitsBoard[x][y] = true;
+        lastMoveX = x; // Save the last move coordinates
+        lastMoveY = y;
         if (isHit) {
             if (hitsBoard == computerBoardHits) {
                 playerHits++;
@@ -268,6 +240,22 @@ public class Game {
 
     public boolean[][] getComputerBoard() {
         return computerBoard;
+    }
+
+    public boolean[][] getPlayerBoardHits() {
+        return playerBoardHits;
+    }
+
+    public boolean[][] getComputerBoardHits() {
+        return computerBoardHits;
+    }
+
+    public int getLastMoveX() {
+        return lastMoveX;
+    }
+
+    public int getLastMoveY() {
+        return lastMoveY;
     }
 
     public void enableGamePlay() {
@@ -318,7 +306,6 @@ public class Game {
 
             while (!turnOver) {
                 if (isFirstMove) {
-                    // Find the first ship position and target it
                     for (int i = 0; i < 10; i++) {
                         for (int j = 0; j < 10; j++) {
                             if (getPlayerBoard()[i][j]) {
@@ -360,7 +347,6 @@ public class Game {
 
             gameUi.showPlayerBoard();
 
-            // Use Timer for delay
             Timer timer = new Timer(1000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -390,7 +376,6 @@ public class Game {
         }
     }
 
-
     private List<int[]> generateAvailableMoves() {
         List<int[]> moves = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -405,11 +390,9 @@ public class Game {
         this.isPlayerTurn = isPlayerTurn;
     }
 
-
     public void setHasPlayerMadeMove(boolean hasPlayerMadeMove) {
         this.hasPlayerMadeMove = hasPlayerMadeMove;
     }
-
 
     public boolean isPlayerTurn() {
         return isPlayerTurn;

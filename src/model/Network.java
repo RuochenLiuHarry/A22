@@ -1,7 +1,7 @@
 package model;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 
 public class Network {
     private Socket socket;
@@ -25,5 +25,7 @@ public class Network {
     public void close() throws IOException {
         in.close();
         out.close();
+        socket.close();
     }
 }
+

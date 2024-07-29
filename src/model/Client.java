@@ -1,24 +1,20 @@
 package model;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 
 public class Client {
-    private Socket socket;
-    private Network network;
+    private Socket clientSocket;
 
-    public Client(String address, int port) throws IOException {
-        socket = new Socket(address, port);
-        System.out.println("Connected to server");
-        network = new Network(socket);
+    public void connect(String address, int port) throws IOException {
+        clientSocket = new Socket(address, port);
     }
 
-    public void close() throws IOException {
-        network.close();
-        socket.close();
+    public Socket getSocket() {
+        return clientSocket;
     }
 
-    public Network getNetwork() {
-        return network;
+    public void disconnect() throws IOException {
+        clientSocket.close();
     }
 }

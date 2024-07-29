@@ -1,98 +1,80 @@
 package view;
 
 import javax.swing.*;
-
-import model.Client;
-import model.Host;
-import model.Network;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class CustomDialog extends JDialog {
-    private JTextField nameField, addressField, portField;
-    private JLabel statusLabel;
-    private JButton connectButton, hostButton, cancelButton;
+    private JTextField addressField;
+    private JTextField portField;
+    private JTextField nameField;
+    private JButton okButton;
+    private JButton cancelButton;
+    private String address;
+    private int port;
+    private String playerName;
     private boolean isHost;
-    private Network network;
 
-    public CustomDialog(JFrame parent) {
-        super(parent, true);
-        setTitle("Network Connection");
+    public CustomDialog(JFrame parent, boolean isHost) {
+        super(parent, "Network Setup", true);
+        this.isHost = isHost;
+        setupUI();
+        setupListeners();
+    }
+
+    private void setupUI() {
+        addressField = new JTextField(20);
+        portField = new JTextField(5);
+        nameField = new JTextField(20);
+        okButton = new JButton("OK");
+        cancelButton = new JButton("Cancel");
+
         setLayout(new GridLayout(5, 2));
 
-        add(new JLabel("Name:"));
-        nameField = new JTextField();
-        add(nameField);
-
         add(new JLabel("Address:"));
-        addressField = new JTextField();
         add(addressField);
-
         add(new JLabel("Port:"));
-        portField = new JTextField();
         add(portField);
-
-        statusLabel = new JLabel("Status:");
-        add(statusLabel);
-
-        connectButton = new JButton("Connect");
-        connectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String address = addressField.getText();
-                    int port = Integer.parseInt(portField.getText());
-                    Client client = new Client(address, port);
-                    network = client.getNetwork();
-                    isHost = false;
-                    setVisible(false);
-                } catch (IOException ex) {
-                    statusLabel.setText("Status: Connection failed");
-                }
-            }
-        });
-        add(connectButton);
-
-        hostButton = new JButton("Host");
-        hostButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int port = Integer.parseInt(portField.getText());
-                    Host host = new Host(port);
-                    network = host.getNetwork();
-                    isHost = true;
-                    setVisible(false);
-                } catch (IOException ex) {
-                    statusLabel.setText("Status: Hosting failed");
-                }
-            }
-        });
-        add(hostButton);
-
-        cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                network = null;
-                setVisible(false);
-            }
-        });
+        add(new JLabel("Name:"));
+        add(nameField);
+        add(okButton);
         add(cancelButton);
 
         pack();
-        setLocationRelativeTo(parent);
     }
 
-    public Network getNetwork() {
-        return network;
+    private void setupListeners() {
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                address = addressField.getText();
+                port = Integer.parseInt(portField.getText());
+                playerName = nameField.getText();
+                setVisible(false);
+            }
+        });
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                address = null;
+                port = -1;
+                playerName = null;
+                setVisible(false);
+            }
+        });
     }
 
-    public boolean isHost() {
-        return isHost;
+    public String getAddress() {
+        return address;
     }
 
-    public String getName() {
-        return nameField.getText();
+    public int getPort() {
+        return port;
+    }
+
+    public String getPlayerName() {
+        return playerName;
     }
 }

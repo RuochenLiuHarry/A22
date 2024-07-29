@@ -24,6 +24,8 @@ import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import model.Network;
+
 public class GameUi extends JFrame {
 
     private JMenu gameMenu;
@@ -63,15 +65,59 @@ public class GameUi extends JFrame {
     private ImageIcon missIcon;
     private final String[] colLabel = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
     private ResourceBundle bundle;
+    private JTextArea chatArea1;
+    private JTextField chatField;
+    private JButton sendButton;
+    private Network network;
+    private boolean isPlayerTurn;
+    private String playerName;
 
     public GameUi() {
-        showSplashScreen("logo.png", 5000);
+        showSplashScreen("logo.png", 2000);
         initializeComponents();
         loadImages();
         changeLocale(Locale.ENGLISH);
         initializeUI();
+        initializeChatComponents();
     }
 
+    private void initializeChatComponents() {
+        chatArea1 = new JTextArea();
+        chatField = new JTextField(20);
+        sendButton = new JButton("Send");
+
+        rightPanel.add(new JScrollPane(chatArea1), BorderLayout.CENTER);
+        JPanel chatInputPanel = new JPanel(new BorderLayout());
+        chatInputPanel.add(chatField, BorderLayout.CENTER);
+        chatInputPanel.add(sendButton, BorderLayout.EAST);
+        rightPanel.add(chatInputPanel, BorderLayout.SOUTH);
+
+        sendButton.addActionListener(e -> {
+            String message = chatField.getText();
+            if (!message.isEmpty() && network != null) {
+                network.sendMessage("CHAT:" + message);
+                chatArea1.append("You: " + message + "\n");
+                chatField.setText("");
+            }
+        });
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
+    }
+
+    public void setPlayerTurn(boolean isPlayerTurn) {
+        this.isPlayerTurn = isPlayerTurn;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public void receiveChatMessage(String message) {
+        chatArea1.append(message + "\n");
+    }
+    
     private void showSplashScreen(String imagePath, int duration) {
         JWindow splashScreen = new JWindow();
         ImageIcon imageIcon = new ImageIcon(imagePath);
@@ -402,7 +448,7 @@ public class GameUi extends JFrame {
         return connectItem;
     }
 
-    public JMenuItem getDisConnectItem() {
+    public JMenuItem getDisconnectItem() {
         return disconnectItem;
     }
 

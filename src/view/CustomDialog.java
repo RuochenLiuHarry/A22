@@ -8,49 +8,51 @@ import java.awt.event.ActionListener;
 public class CustomDialog extends JDialog {
     private JTextField addressField;
     private JTextField portField;
-    private JTextField nameField;
-    private JButton okButton;
-    private JButton cancelButton;
+    private JTextField playerNameField;
     private String address;
     private int port;
     private String playerName;
     private boolean isHost;
 
-    public CustomDialog(JFrame parent, boolean isHost) {
-        super(parent, "Network Setup", true);
+    public CustomDialog(Frame owner, boolean isHost) {
+        super(owner, "Network Setup", true);
         this.isHost = isHost;
-        setupUI();
-        setupListeners();
+        initializeUI();
     }
 
-    private void setupUI() {
-        addressField = new JTextField(20);
-        portField = new JTextField(5);
-        nameField = new JTextField(20);
-        okButton = new JButton("OK");
-        cancelButton = new JButton("Cancel");
+    private void initializeUI() {
+        setLayout(new BorderLayout());
 
-        setLayout(new GridLayout(5, 2));
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+        panel.add(new JLabel("Address:"));
+        addressField = new JTextField();
+        panel.add(addressField);
 
-        add(new JLabel("Address:"));
-        add(addressField);
-        add(new JLabel("Port:"));
-        add(portField);
-        add(new JLabel("Name:"));
-        add(nameField);
-        add(okButton);
-        add(cancelButton);
+        panel.add(new JLabel("Port:"));
+        portField = new JTextField();
+        panel.add(portField);
 
-        pack();
-    }
+        panel.add(new JLabel("Name:"));
+        playerNameField = new JTextField();
+        panel.add(playerNameField);
 
-    private void setupListeners() {
+        add(panel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton okButton = new JButton("OK");
+        JButton cancelButton = new JButton("Cancel");
+
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                address = addressField.getText();
-                port = Integer.parseInt(portField.getText());
-                playerName = nameField.getText();
+                address = addressField.getText().trim();
+                port = Integer.parseInt(portField.getText().trim());
+                playerName = playerNameField.getText().trim();
                 setVisible(false);
             }
         });
@@ -59,11 +61,14 @@ public class CustomDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 address = null;
-                port = -1;
+                port = 0;
                 playerName = null;
                 setVisible(false);
             }
         });
+
+        pack();
+        setLocationRelativeTo(getOwner());
     }
 
     public String getAddress() {

@@ -26,8 +26,8 @@ public class Game {
     private boolean isHunting;
     private int lastHitX;
     private int lastHitY;
-    private int lastMoveX; // New field
-    private int lastMoveY; // New field
+    private int lastMoveX;
+    private int lastMoveY;
     private List<int[]> availableMoves;
     private List<int[]> huntMoves;
     private boolean isFirstMove;
@@ -211,7 +211,7 @@ public class Game {
 
     public void markHitOrMiss(int x, int y, boolean[][] hitsBoard, boolean isHit) {
         hitsBoard[x][y] = true;
-        lastMoveX = x; // Save the last move coordinates
+        lastMoveX = x;
         lastMoveY = y;
         if (isHit) {
             if (hitsBoard == computerBoardHits) {

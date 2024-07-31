@@ -13,6 +13,7 @@ import view.GameUi;
 public class Game {
 
     private GameUi gameUi;
+    private Network network; // 添加 Network 引用
     private boolean[][] playerBoard;
     private boolean[][] computerBoard;
     private boolean[][] playerBoardHits;
@@ -54,6 +55,10 @@ public class Game {
         this.playerHits = 0;
         this.computerHits = 0;
         initializeShips();
+    }
+
+    public void setNetwork(Network network) { // 添加 Network 的 setter 方法
+        this.network = network;
     }
 
     private void initializeShips() {
@@ -279,6 +284,9 @@ public class Game {
                             if (checkVictory(playerHits)) {
                                 gameUi.showVictoryMessage();
                                 disableGamePlay();
+                            }
+                            if (network != null) {
+                                network.sendMessage("SHOOT:" + x + "," + y);
                             }
                         }
                     }

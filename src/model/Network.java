@@ -106,6 +106,10 @@ public class Network {
         } else if (message.equals("PLACE_SHIPS")) {
             game.enableShipPlacement();
             gameUi.showMessage("Please place your 5 ships on the board.");
+        } else if (message.equals("END_TURN")) {
+            game.setPlayerTurn(true);
+            gameUi.showMessage("Your turn!");
+            gameUi.showComputerBoard();
         }
     }
 

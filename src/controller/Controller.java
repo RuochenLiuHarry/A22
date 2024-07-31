@@ -55,6 +55,7 @@ public class Controller {
                             Socket socket = host.accept();
                             network = new Network(socket, gameUi, game, this, true);
                             gameUi.setNetwork(network);
+                            game.setNetwork(network); // 设置 Network 实例
                             isHost = true;
                             gameUi.setPlayerName(serverDialog.getPlayerName());
                             gameUi.showMessage("Connected as host.");
@@ -80,6 +81,7 @@ public class Controller {
                     client.connect(clientDialog.getAddress(), clientDialog.getPort());
                     network = new Network(client.getSocket(), gameUi, game, this, false);
                     gameUi.setNetwork(network);
+                    game.setNetwork(network); // 设置 Network 实例
                     isHost = false;
                     gameUi.setPlayerName(clientDialog.getPlayerName());
                     gameUi.showMessage("Connected to host.");
@@ -147,19 +149,24 @@ public class Controller {
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
             gameUi.showPlayerBoard();
+            if (network != null) {
+                network.sendMessage("END_TURN");
+            }
 
             if (game.checkVictory(game.getPlayerHits())) {
                 gameUi.showVictoryMessage();
                 game.disableGamePlay();
             } else {
-                Timer timer = new Timer(1500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        game.computerTurn();
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
+                if (!isPvpMode) { // For PVE mode
+                    Timer timer = new Timer(1500, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            game.computerTurn();
+                        }
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                }
             }
         });
 

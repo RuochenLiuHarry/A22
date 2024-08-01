@@ -8,7 +8,7 @@ public class Client {
 
     public void connect(String address, int port) throws IOException {
         clientSocket = new Socket(address, port);
-    }
+    }    
 
     public Socket getSocket() {
         return clientSocket;

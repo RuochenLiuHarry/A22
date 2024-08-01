@@ -106,6 +106,10 @@ public class GameUi extends JFrame {
         this.network = network;
     }
 
+    public Network getNetwork() {
+        return network;
+    }
+
     public void setPlayerTurn(boolean isPlayerTurn) {
         this.isPlayerTurn = isPlayerTurn;
     }
@@ -176,6 +180,7 @@ public class GameUi extends JFrame {
         chatArea = new JTextArea();
         chatInput = new JTextField();
         chatScrollPane = new JScrollPane(chatArea);
+        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2)); // Initialize computerGridPanel
     }
 
     private void initializeUI() {
@@ -409,10 +414,16 @@ public class GameUi extends JFrame {
     }
 
     public void showPlayerBoard() {
-        panel.remove(computerGridPanel);
+        if (computerGridPanel.getParent() != null) {
+            panel.remove(computerGridPanel);
+        }
         panel.add(gridPanel, BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
+    }
+
+    public void showHostBoard() {
+        showPlayerBoard();
     }
 
     public JMenuItem getPveItem() {

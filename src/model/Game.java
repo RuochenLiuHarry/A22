@@ -34,6 +34,7 @@ public class Game {
     private int playerHits;
     private int computerHits;
     private static final int TOTAL_SHIP_PARTS = 17;
+    private Network network;
 
     public Game(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -270,12 +271,15 @@ public class Game {
                 button.addActionListener(e -> {
                     if (isPlayerTurn) {
                         if (hasPlayerMadeMove) {
-                            //gameUi.showCannotGoTwiceMessage();
+                            gameUi.showCannotGoTwiceMessage();
                         } else {
                             boolean isHit = checkHit(x, y, getComputerBoard());
                             markHitOrMiss(x, y, computerBoardHits, isHit);
-                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                             hasPlayerMadeMove = true;
+                            if (gameUi.getNetwork() != null) {
+                                gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
+                            }
+                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                             if (checkVictory(playerHits)) {
                                 gameUi.showVictoryMessage();
                                 disableGamePlay();
@@ -400,5 +404,34 @@ public class Game {
 
     public boolean hasPlayerMadeMove() {
         return hasPlayerMadeMove;
+    }
+
+    public void enablePvpGamePlay() {
+        enableGamePlay();
+    }
+
+    public void handleHostShot(int x, int y) {
+        boolean isHit = checkHit(x, y, playerBoard);
+        markHitOrMiss(x, y, playerBoardHits, isHit);
+        gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+        if (checkVictory(computerHits)) {
+            gameUi.showVictoryMessage();
+            disableGamePlay();
+        }
+        network.sendMessage("HIT:" + isHit + "," + x + "," + y);
+    }
+
+    public void handleClientShot(int x, int y) {
+        boolean isHit = checkHit(x, y, computerBoard);
+        markHitOrMiss(x, y, computerBoardHits, isHit);
+        gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+        if (checkVictory(playerHits)) {
+            gameUi.showVictoryMessage();
+            disableGamePlay();
+        }
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 }

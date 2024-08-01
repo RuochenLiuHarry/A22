@@ -55,6 +55,7 @@ public class Controller {
                             Socket socket = host.accept();
                             network = new Network(socket, gameUi, game, this, true);
                             gameUi.setNetwork(network);
+                            game.setNetwork(network);
                             isHost = true;
                             gameUi.setPlayerName(serverDialog.getPlayerName());
                             gameUi.showMessage("Connected as host.");
@@ -80,6 +81,7 @@ public class Controller {
                     client.connect(clientDialog.getAddress(), clientDialog.getPort());
                     network = new Network(client.getSocket(), gameUi, game, this, false);
                     gameUi.setNetwork(network);
+                    game.setNetwork(network);
                     isHost = false;
                     gameUi.setPlayerName(clientDialog.getPlayerName());
                     gameUi.showMessage("Connected to host.");
@@ -146,20 +148,23 @@ public class Controller {
             if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
-            gameUi.showPlayerBoard();
-
-            if (game.checkVictory(game.getPlayerHits())) {
-                gameUi.showVictoryMessage();
-                game.disableGamePlay();
+            if (isPvpMode && network != null) {
+                network.sendMessage("END_TURN");
+                gameUi.showMessage("Waiting for opponent's move...");
             } else {
-                Timer timer = new Timer(1500, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        game.computerTurn();
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
+                if (game.checkVictory(game.getPlayerHits())) {
+                    gameUi.showVictoryMessage();
+                    game.disableGamePlay();
+                } else {
+                    Timer timer = new Timer(1500, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            game.computerTurn();
+                        }
+                    });
+                    timer.setRepeats(false);
+                    timer.start();
+                }
             }
         });
 

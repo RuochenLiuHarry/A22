@@ -1,27 +1,9 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JWindow;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import model.Network;
@@ -106,10 +88,6 @@ public class GameUi extends JFrame {
         this.network = network;
     }
 
-    public Network getNetwork() {
-        return network;
-    }
-
     public void setPlayerTurn(boolean isPlayerTurn) {
         this.isPlayerTurn = isPlayerTurn;
     }
@@ -180,7 +158,6 @@ public class GameUi extends JFrame {
         chatArea = new JTextArea();
         chatInput = new JTextField();
         chatScrollPane = new JScrollPane(chatArea);
-        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2)); // Initialize computerGridPanel
     }
 
     private void initializeUI() {
@@ -306,6 +283,26 @@ public class GameUi extends JFrame {
         pack();
 
         updateText();
+
+        // Initialize computerGridPanel here
+        initializeComputerGridPanel();
+    }
+
+    private void initializeComputerGridPanel() {
+        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
+        computerGridPanel.setBackground(new Color(51, 204, 255));
+
+        computerGridPanel.add(new JLabel("")); // Empty top-left corner
+        for (String label : colLabel) {
+            computerGridPanel.add(new JLabel(label, SwingConstants.CENTER));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            computerGridPanel.add(new JLabel(String.valueOf(i + 1), SwingConstants.CENTER));
+            for (int j = 0; j < 10; j++) {
+                computerGridPanel.add(computerGridButtons[i][j]);
+            }
+        }
     }
     
     public void resetUI() {
@@ -414,16 +411,10 @@ public class GameUi extends JFrame {
     }
 
     public void showPlayerBoard() {
-        if (computerGridPanel.getParent() != null) {
-            panel.remove(computerGridPanel);
-        }
+        panel.remove(computerGridPanel);
         panel.add(gridPanel, BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
-    }
-
-    public void showHostBoard() {
-        showPlayerBoard();
     }
 
     public JMenuItem getPveItem() {
@@ -562,5 +553,27 @@ public class GameUi extends JFrame {
     public void showChatMessage(String message) {
         chatArea.append(message + "\n");
         chatArea.setCaretPosition(chatArea.getDocument().getLength());
+    }
+    
+    public void switchToOpponentBoard() {
+        panel.remove(gridPanel);
+        panel.add(computerGridPanel, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public void switchToPlayerBoard() {
+        panel.remove(computerGridPanel);
+        panel.add(gridPanel, BorderLayout.CENTER);
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    public void markOpponentBoard(int x, int y, boolean isHit) {
+        computerGridButtons[x][y].setIcon(isHit ? hitIcon : missIcon);
+    }
+
+    public void markPlayerBoard(int x, int y, boolean isHit) {
+        gridButtons[x][y].setIcon(isHit ? hitIcon : missIcon);
     }
 }

@@ -30,6 +30,7 @@ public class Controller {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
         initializeController();
+        game.setNetwork(network); // 添加这行确保network被设置
     }
 
     private void initializeController() {
@@ -55,7 +56,7 @@ public class Controller {
                             Socket socket = host.accept();
                             network = new Network(socket, gameUi, game, this, true);
                             gameUi.setNetwork(network);
-                            game.setNetwork(network);
+                            game.setNetwork(network); // 设置 Network 实例
                             isHost = true;
                             gameUi.setPlayerName(serverDialog.getPlayerName());
                             gameUi.showMessage("Connected as host.");
@@ -81,7 +82,7 @@ public class Controller {
                     client.connect(clientDialog.getAddress(), clientDialog.getPort());
                     network = new Network(client.getSocket(), gameUi, game, this, false);
                     gameUi.setNetwork(network);
-                    game.setNetwork(network);
+                    game.setNetwork(network); // 设置 Network 实例
                     isHost = false;
                     gameUi.setPlayerName(clientDialog.getPlayerName());
                     gameUi.showMessage("Connected to host.");
@@ -123,7 +124,7 @@ public class Controller {
             if (game.getCurrentShipName() != null) {
                 gameUi.showPlaceAllShipsMessage();
             } else {
-                if (isPvpMode) { // For PVP mode
+                if (isPvpMode) {
                     if (network != null) {
                         network.sendMessage("READY::" + gameUi.getPlayerName());
                     }
@@ -135,10 +136,14 @@ public class Controller {
                         gameUi.showMessage("Client is ready!");
                     }
                     network.checkBothReady();
-                } else { // For PVE mode
+                    if (isHost) {
+                        gameUi.switchToOpponentBoard();
+                        game.enablePvpGameplay();
+                    }
+                } else {
                     game.placeComputerShips();
                     gameUi.showComputerBoard();
-                    gameUi.getStartButton().setEnabled(false); // Disable the Start Game button
+                    gameUi.getStartButton().setEnabled(false);
                     game.enableGamePlay();
                 }
             }
@@ -148,23 +153,9 @@ public class Controller {
             if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
-            if (isPvpMode && network != null) {
+            gameUi.switchToPlayerBoard();
+            if (network != null) {
                 network.sendMessage("END_TURN");
-                gameUi.showMessage("Waiting for opponent's move...");
-            } else {
-                if (game.checkVictory(game.getPlayerHits())) {
-                    gameUi.showVictoryMessage();
-                    game.disableGamePlay();
-                } else {
-                    Timer timer = new Timer(1500, new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            game.computerTurn();
-                        }
-                    });
-                    timer.setRepeats(false);
-                    timer.start();
-                }
             }
         });
 

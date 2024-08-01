@@ -13,6 +13,7 @@ import view.GameUi;
 public class Game {
 
     private GameUi gameUi;
+    private Network network; // 添加 Network 引用
     private boolean[][] playerBoard;
     private boolean[][] computerBoard;
     private boolean[][] playerBoardHits;
@@ -34,7 +35,6 @@ public class Game {
     private int playerHits;
     private int computerHits;
     private static final int TOTAL_SHIP_PARTS = 17;
-    private Network network;
 
     public Game(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -55,6 +55,10 @@ public class Game {
         this.playerHits = 0;
         this.computerHits = 0;
         initializeShips();
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     private void initializeShips() {
@@ -271,18 +275,18 @@ public class Game {
                 button.addActionListener(e -> {
                     if (isPlayerTurn) {
                         if (hasPlayerMadeMove) {
-                            gameUi.showCannotGoTwiceMessage();
+                            //gameUi.showCannotGoTwiceMessage();
                         } else {
                             boolean isHit = checkHit(x, y, getComputerBoard());
                             markHitOrMiss(x, y, computerBoardHits, isHit);
-                            hasPlayerMadeMove = true;
-                            if (gameUi.getNetwork() != null) {
-                                gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
-                            }
                             gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                            hasPlayerMadeMove = true;
                             if (checkVictory(playerHits)) {
                                 gameUi.showVictoryMessage();
                                 disableGamePlay();
+                            }
+                            if (network != null) {
+                                network.sendMessage("SHOOT:" + x + "," + y);
                             }
                         }
                     }
@@ -406,32 +410,39 @@ public class Game {
         return hasPlayerMadeMove;
     }
 
-    public void enablePvpGamePlay() {
-        enableGamePlay();
-    }
-
-    public void handleHostShot(int x, int y) {
-        boolean isHit = checkHit(x, y, playerBoard);
-        markHitOrMiss(x, y, playerBoardHits, isHit);
-        gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-        if (checkVictory(computerHits)) {
-            gameUi.showVictoryMessage();
-            disableGamePlay();
+    public void enablePvpGameplay() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                int x = i;
+                int y = j;
+                JButton button = gameUi.getComputerGridButtons()[i][j];
+                for (ActionListener al : button.getActionListeners()) {
+                    button.removeActionListener(al);
+                }
+                button.addActionListener(e -> {
+                    if (isPlayerTurn) {
+                        if (hasPlayerMadeMove) {
+                            // gameUi.showCannotGoTwiceMessage();
+                        } else {
+                            boolean isHit = checkHit(x, y, getComputerBoard());
+                            markHitOrMiss(x, y, computerBoardHits, isHit);
+                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                            hasPlayerMadeMove = true;
+                            if (checkVictory(playerHits)) {
+                                gameUi.showVictoryMessage();
+                                disableGamePlay();
+                            }
+                            if (network != null) {
+                                network.sendMessage("SHOOT:" + x + "," + y);
+                            }
+                        }
+                    }
+                });
+            }
         }
-        network.sendMessage("HIT:" + isHit + "," + x + "," + y);
     }
 
-    public void handleClientShot(int x, int y) {
-        boolean isHit = checkHit(x, y, computerBoard);
-        markHitOrMiss(x, y, computerBoardHits, isHit);
-        gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-        if (checkVictory(playerHits)) {
-            gameUi.showVictoryMessage();
-            disableGamePlay();
-        }
-    }
-
-    public void setNetwork(Network network) {
-        this.network = network;
+    public void switchToPlayerBoard() {
+        gameUi.showPlayerBoard();
     }
 }

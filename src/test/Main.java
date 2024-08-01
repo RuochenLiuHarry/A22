@@ -3,7 +3,6 @@ package test;
 import view.GameUi;
 import controller.Controller;
 
-
 public class Main {
     /**
      * The main method to start the Battleship game.

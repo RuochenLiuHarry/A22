@@ -1,38 +1,19 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JWindow;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
-
 import model.Network;
 
 public class GameUi extends JFrame {
-
+    // Components declaration
     private JMenu gameMenu;
     private JMenu languageMenu;
     private JPanel panel;
     private JMenuItem pveItem;
-    private JMenu pvpMenu; // Modified to a menu
+    private JMenu pvpMenu;
     private JMenuItem hostItem;
     private JMenuItem connectItem;
     private JMenuItem disconnectItem;
@@ -40,20 +21,24 @@ public class GameUi extends JFrame {
     private JMenuItem exitItem;
     private JMenuItem englishItem;
     private JMenuItem chineseItem;
-    private JPanel gridPanel;
-    private JButton[][] gridButtons;
-    private JPanel computerGridPanel;
-    private JButton[][] computerGridButtons;
+    private JPanel gridPanel; // player & host
+    private JButton[][] gridButtons; // player & host
+    private JPanel computerGridPanel;  // computer
+    private JButton[][] computerGridButtons; // computer
+    
+    private JPanel clientGridPanel; // client
+    private JButton[][] clientGridButtons; // client
+    
     private JButton rotateButton;
     private JButton startButton;
     private JButton endTurnButton;
     private JButton quitButton;
     private JPanel leftPanel;
     private JScrollPane leftPanelScrollPane;
-    private JTextArea gameLog; // New component for the game log
+    private JTextArea gameLog;
     private JPanel rightPanel;
-    private JTextArea chatArea; // Chat area for displaying messages
-    private JTextField chatInput; // Chat input field for typing messages
+    private JTextArea chatArea;
+    private JTextField chatInput;
     private JScrollPane chatScrollPane;
     private ImageIcon bowEast;
     private ImageIcon bowNorth;
@@ -70,7 +55,7 @@ public class GameUi extends JFrame {
     private JButton sendButton;
     private Network network;
     private boolean isPlayerTurn;
-    private String playerName; // Add this field
+    private String playerName;
 
     public GameUi() {
         showSplashScreen("logo.png", 2000);
@@ -114,18 +99,18 @@ public class GameUi extends JFrame {
         this.isPlayerTurn = isPlayerTurn;
     }
 
-    public void setPlayerName(String playerName) { // Add this setter
+    public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 
-    public String getPlayerName() { // Add this getter
+    public String getPlayerName() {
         return playerName;
     }
 
     public void receiveChatMessage(String message) {
         chatArea1.append(message + "\n");
     }
-    
+
     private void showSplashScreen(String imagePath, int duration) {
         JWindow splashScreen = new JWindow();
         ImageIcon imageIcon = new ImageIcon(imagePath);
@@ -169,6 +154,7 @@ public class GameUi extends JFrame {
         gridPanel = new JPanel();
         gridButtons = new JButton[10][10];
         computerGridButtons = new JButton[10][10];
+        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
         rotateButton = new JButton();
         startButton = new JButton();
         endTurnButton = new JButton();
@@ -180,7 +166,6 @@ public class GameUi extends JFrame {
         chatArea = new JTextArea();
         chatInput = new JTextField();
         chatScrollPane = new JScrollPane(chatArea);
-        computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2)); // Initialize computerGridPanel
     }
 
     private void initializeUI() {
@@ -252,11 +237,10 @@ public class GameUi extends JFrame {
 
         panel.add(gridPanel, BorderLayout.CENTER);
 
-        // Left Panel
         leftPanel = new JPanel(new BorderLayout());
         leftPanel.setBackground(new Color(0, 51, 90));
         leftPanel.setPreferredSize(new Dimension(150, leftPanel.getPreferredSize().height));
-        
+
         gameLog.setEditable(false);
         gameLog.setLineWrap(true);
         gameLog.setWrapStyleWord(true);
@@ -267,11 +251,10 @@ public class GameUi extends JFrame {
 
         panel.add(leftPanel, BorderLayout.WEST);
 
-        // Right Panel for chat system
         rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBackground(new Color(0, 51, 90));
         rightPanel.setPreferredSize(new Dimension(150, rightPanel.getPreferredSize().height));
-        
+
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
@@ -280,7 +263,7 @@ public class GameUi extends JFrame {
         chatScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         rightPanel.add(chatScrollPane, BorderLayout.CENTER);
 
-        chatInput.setBackground(Color.WHITE); // Set chat input background to white
+        chatInput.setBackground(Color.WHITE);
         rightPanel.add(chatInput, BorderLayout.SOUTH);
 
         panel.add(rightPanel, BorderLayout.EAST);
@@ -307,7 +290,7 @@ public class GameUi extends JFrame {
 
         updateText();
     }
-    
+
     public void resetUI() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -316,7 +299,7 @@ public class GameUi extends JFrame {
             }
         }
 
-        showPlayerBoard(); 
+        showPlayerBoard();
         getStartButton().setEnabled(true);
     }
 

@@ -11,7 +11,6 @@ import javax.swing.Timer;
 import view.GameUi;
 
 public class Game {
-
     private GameUi gameUi;
     private boolean[][] playerBoard;
     private boolean[][] computerBoard;
@@ -408,27 +407,6 @@ public class Game {
 
     public void enablePvpGamePlay() {
         enableGamePlay();
-    }
-
-    public void handleHostShot(int x, int y) {
-        boolean isHit = checkHit(x, y, playerBoard);
-        markHitOrMiss(x, y, playerBoardHits, isHit);
-        gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-        if (checkVictory(computerHits)) {
-            gameUi.showVictoryMessage();
-            disableGamePlay();
-        }
-        network.sendMessage("HIT:" + isHit + "," + x + "," + y);
-    }
-
-    public void handleClientShot(int x, int y) {
-        boolean isHit = checkHit(x, y, computerBoard);
-        markHitOrMiss(x, y, computerBoardHits, isHit);
-        gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-        if (checkVictory(playerHits)) {
-            gameUi.showVictoryMessage();
-            disableGamePlay();
-        }
     }
 
     public void setNetwork(Network network) {

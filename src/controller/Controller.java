@@ -24,7 +24,7 @@ public class Controller {
     private CustomDialog serverDialog;
     private CustomDialog clientDialog;
     private boolean isHost;
-    private boolean isPvpMode = false; // Add a flag to indicate PVP mode
+    private boolean isPvpMode = false;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
@@ -34,14 +34,14 @@ public class Controller {
 
     private void initializeController() {
         gameUi.getPveItem().addActionListener(e -> {
-            isPvpMode = false; // Set PVE mode
+            isPvpMode = false;
             gameUi.showPveDialog();
             game.enableShipPlacement();
             gameUi.showMessage("Game mode: PVE");
         });
 
         gameUi.getHostItem().addActionListener(e -> {
-            isPvpMode = true; // Set PVP mode
+            isPvpMode = true;
             serverDialog = new CustomDialog(gameUi, true);
             serverDialog.setVisible(true);
 
@@ -71,7 +71,7 @@ public class Controller {
         });
 
         gameUi.getConnectItem().addActionListener(e -> {
-            isPvpMode = true; // Set PVP mode
+            isPvpMode = true;
             clientDialog = new CustomDialog(gameUi, false);
             clientDialog.setVisible(true);
 
@@ -123,7 +123,7 @@ public class Controller {
             if (game.getCurrentShipName() != null) {
                 gameUi.showPlaceAllShipsMessage();
             } else {
-                if (isPvpMode) { // For PVP mode
+                if (isPvpMode) {
                     if (network != null) {
                         network.sendMessage("READY::" + gameUi.getPlayerName());
                     }
@@ -135,10 +135,10 @@ public class Controller {
                         gameUi.showMessage("Client is ready!");
                     }
                     network.checkBothReady();
-                } else { // For PVE mode
+                } else {
                     game.placeComputerShips();
                     gameUi.showComputerBoard();
-                    gameUi.getStartButton().setEnabled(false); // Disable the Start Game button
+                    gameUi.getStartButton().setEnabled(false);
                     game.enableGamePlay();
                 }
             }

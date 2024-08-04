@@ -124,6 +124,7 @@ public class Network {
         } else if (message.equals("END_TURN")) {
             game.setPlayerTurn(true);
             game.setHasPlayerMadeMove(false);
+            game.enableGamePlay();
             gameUi.showComputerBoard();
             gameUi.showYourTurn();
         }

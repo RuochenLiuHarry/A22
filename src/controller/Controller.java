@@ -149,6 +149,7 @@ public class Controller {
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
             if (isPvpMode && network != null) {
+            	gameUi.showPlayerBoard();
                 network.sendMessage("END_TURN");
                 gameUi.showMessage("Waiting for opponent's move...");
             } else {

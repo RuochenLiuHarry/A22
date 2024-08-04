@@ -130,9 +130,11 @@ public class Controller {
                     if (isHost) {
                         network.setHostReady(true);
                         gameUi.showMessage("Host is ready!");
+                        gameUi.enableStartButton(false);
                     } else {
                         network.setClientReady(true);
                         gameUi.showMessage("Client is ready!");
+                        gameUi.enableStartButton(false);
                     }
                     network.checkBothReady();
                 } else {
@@ -145,6 +147,7 @@ public class Controller {
         });
 
         gameUi.getEndTurnButton().addActionListener(e -> {
+        	
             if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
@@ -152,12 +155,15 @@ public class Controller {
             	gameUi.showPlayerBoard();
                 network.sendMessage("END_TURN");
                 gameUi.showMessage("Waiting for opponent's move...");
+            	
             } else {
                 if (game.checkVictory(game.getPlayerHits())) {
                     gameUi.showVictoryMessage();
                     game.disableGamePlay();
+                
                 } else {
-                    Timer timer = new Timer(1500, new ActionListener() {
+                	gameUi.showPlayerBoard(); // Show the computer board immediately
+                    Timer timer = new Timer(1000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             game.computerTurn();

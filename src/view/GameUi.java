@@ -529,6 +529,9 @@ public class GameUi extends JFrame {
         JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
     }
 
+    public void enableStartButton(boolean a){
+    	startButton.setEnabled(a);
+    }
     public void showCannotGoTwiceMessage() {
         showMessage(bundle.getString("showCannotGoTwiceMessage"));
     }

@@ -311,10 +311,11 @@ public class Game {
                                 gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
                             }
 //                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-                            if (checkVictory(playerHits)) {
-                                gameUi.showVictoryMessage();
-                                disableGamePlay();
-                            }
+//                            if (checkVictory(computerHits)) {
+//                     
+//                            	gameUi.getNetwork().sendMessage("GRESULT:" + true);
+//
+//                            }
                         }
                     }
                 });

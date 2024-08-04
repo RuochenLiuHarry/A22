@@ -96,20 +96,25 @@ public class Network {
           if (isHost) {
               game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
               gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+              if(game.checkVictory(game.getPlayerHits())) {
+            	gameUi.showVictoryMessage();
+          		gameUi.getNetwork().sendMessage("LOST");
+          		game.disableGamePlay();
+          	}
          } else {
-            game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
+            game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
             gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-          }
-        }
-         else if (message.startsWith("GRESULT:")) {
-            boolean hasWon = Boolean.parseBoolean(message.substring(8));
-            if (hasWon) {
-                gameUi.showLossMessage();
-            } else {
-                gameUi.showVictoryMessage();
+            if(game.checkVictory(game.getPlayerHits())) {
+            	gameUi.showVictoryMessage();
+        		gameUi.getNetwork().sendMessage("LOST");
+        	}
+          }      
+            } else if (message.equals("LOST")) {
+               gameUi.showLossMessage();
+               game.disableGamePlay();
             }
-            game.disableGamePlay();
-        } else if (message.startsWith("READY::")) {
+            
+         else if (message.startsWith("READY::")) {
             String name = message.split("::")[1];
             gameUi.showMessage(name + " is ready!");
             if (isHost) {

@@ -62,6 +62,7 @@ public class Network {
                 gameUi.showMessage("Waiting for host's move...");
                 gameUi.showPlayerBoard();
             }
+           
         }
     }
 
@@ -70,29 +71,37 @@ public class Network {
             gameUi.receiveChatMessage("Opponent: " + message.substring(5));
         } else if (message.startsWith("SHOOT:")) {
             String[] parts = message.substring(6).split(",");
-            boolean isHit = Boolean.parseBoolean(parts[0]);
+
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
             if (isHost) {
-                game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
+            	 boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
+            	 game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
                 gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                gameUi.getNetwork().sendMessage("HIT:" + x + "," + y + "," + isHit);
+                
+                
             } else {
-                game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
+            	 boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
+            	 game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
                 gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                gameUi.getNetwork().sendMessage("HIT:" + x + "," + y + "," + isHit);
+                
             }
         } else if (message.startsWith("HIT:")) {
-//            String[] parts = message.substring(4).split(",");
-//            boolean isHit = Boolean.parseBoolean(parts[0]);
-//            int x = Integer.parseInt(parts[1]);
-//            int y = Integer.parseInt(parts[2]);
-//            if (isHost) {
-//                game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
-//                gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-//            } else {
-//                game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
-//                gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-//            }
-        } else if (message.startsWith("GRESULT:")) {
+           String[] parts = message.substring(4).split(",");
+            boolean isHit = Boolean.parseBoolean(parts[2]);
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+          if (isHost) {
+              game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
+              gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+         } else {
+            game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
+            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+          }
+        }
+         else if (message.startsWith("GRESULT:")) {
             boolean hasWon = Boolean.parseBoolean(message.substring(8));
             if (hasWon) {
                 gameUi.showLossMessage();

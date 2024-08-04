@@ -272,13 +272,13 @@ public class Game {
                         if (hasPlayerMadeMove) {
                             gameUi.showCannotGoTwiceMessage();
                         } else {
-                            boolean isHit = checkHit(x, y, getComputerBoard());
-                            markHitOrMiss(x, y, computerBoardHits, isHit);
+//                            boolean isHit = checkHit(x, y, getComputerBoard());
+//                            markHitOrMiss(x, y, computerBoardHits, isHit);
                             hasPlayerMadeMove = true;
                             if (gameUi.getNetwork() != null) {
                                 gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
                             }
-                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+//                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
                             if (checkVictory(playerHits)) {
                                 gameUi.showVictoryMessage();
                                 disableGamePlay();

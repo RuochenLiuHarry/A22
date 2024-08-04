@@ -36,6 +36,10 @@ public class CustomDialog extends JDialog {
         playerNameField = new JTextField();
         panel.add(playerNameField);
 
+        if (isHost) {
+            addressField.setEditable(false);
+        }
+
         add(panel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());

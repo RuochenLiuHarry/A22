@@ -36,9 +36,25 @@ public class Network {
     }
 
     public void close() throws IOException {
-        in.close();
-        out.close();
-        socket.close();
+        if (in != null) in.close();
+        if (out != null) out.close();
+        if (socket != null) socket.close();
+    }
+
+    public void disconnect() {
+        try {
+            sendMessage("DISCONNECT");
+            close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            gameUi.showMessage("Disconnected from the game.");
+            game.resetGame();
+            gameUi.resetUI();
+            gameUi.showMenu();
+            game.disableShipPlacement();
+            game.disableGamePlay();
+        }
     }
 
     public void setHostReady(boolean isHostReady) {
@@ -49,7 +65,7 @@ public class Network {
         this.isClientReady = isClientReady;
     }
 
-    public void checkBothReady() {	/* Gameplay PVP*/
+    public void checkBothReady() { 
         if (isHostReady && isClientReady) {
             gameUi.showMessage("Both players are ready! Host goes first.");
             if (isHost) {
@@ -62,7 +78,6 @@ public class Network {
                 gameUi.showMessage("Waiting for host's move...");
                 gameUi.showPlayerBoard();
             }
-           
         }
     }
 
@@ -74,47 +89,26 @@ public class Network {
 
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
-            if (isHost) {
-            	 boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
-            	 game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
-                gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-                gameUi.getNetwork().sendMessage("HIT:" + x + "," + y + "," + isHit);
-                
-                
-            } else {
-            	 boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
-            	 game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
-                gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-                gameUi.getNetwork().sendMessage("HIT:" + x + "," + y + "," + isHit);
-                
-            }
+            boolean isHit = game.checkHit(x, y, game.getPlayerBoard());
+            game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
+            gameUi.markPlayerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+            gameUi.getNetwork().sendMessage("HIT:" + x + "," + y + "," + isHit);
         } else if (message.startsWith("HIT:")) {
-           String[] parts = message.substring(4).split(",");
+            String[] parts = message.substring(4).split(",");
             boolean isHit = Boolean.parseBoolean(parts[2]);
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
-          if (isHost) {
-              game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
-              gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-              if(game.checkVictory(game.getPlayerHits())) {
-            	gameUi.showVictoryMessage();
-          		gameUi.getNetwork().sendMessage("LOST");
-          		game.disableGamePlay();
-          	}
-         } else {
-            game.markHitOrMiss(x, y, game.getPlayerBoardHits(), isHit);
+            game.markHitOrMiss(x, y, game.getComputerBoardHits(), isHit);
             gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-            if(game.checkVictory(game.getPlayerHits())) {
-            	gameUi.showVictoryMessage();
-        		gameUi.getNetwork().sendMessage("LOST");
-        	}
-          }      
-            } else if (message.equals("LOST")) {
-               gameUi.showLossMessage();
-               game.disableGamePlay();
+            if (game.checkVictory(game.getPlayerHits())) {
+                gameUi.showVictoryMessage();
+                gameUi.getNetwork().sendMessage("LOST");
+                game.disableGamePlay();
             }
-            
-         else if (message.startsWith("READY::")) {
+        } else if (message.equals("LOST")) {
+            gameUi.showLossMessage();
+            game.disableGamePlay();
+        } else if (message.startsWith("READY::")) {
             String name = message.split("::")[1];
             gameUi.showMessage(name + " is ready!");
             if (isHost) {
@@ -132,6 +126,8 @@ public class Network {
             game.enablePvpGamePlay();
             gameUi.showComputerBoard();
             gameUi.showYourTurn();
+        } else if (message.equals("DISCONNECT")) {
+            disconnect();
         }
     }
 

@@ -147,22 +147,19 @@ public class Controller {
         });
 
         gameUi.getEndTurnButton().addActionListener(e -> {
-        	
             if (!game.isPlayerTurn() || !game.hasPlayerMadeMove()) return;
             game.setPlayerTurn(false);
             game.setHasPlayerMadeMove(false);
             if (isPvpMode && network != null) {
-            	gameUi.showPlayerBoard();
+                gameUi.showPlayerBoard();
                 network.sendMessage("END_TURN");
                 gameUi.showMessage("Waiting for opponent's move...");
-            	
             } else {
                 if (game.checkVictory(game.getPlayerHits())) {
                     gameUi.showVictoryMessage();
                     game.disableGamePlay();
-                
                 } else {
-                	gameUi.showPlayerBoard(); // Show the computer board immediately
+                    gameUi.showPlayerBoard();
                     Timer timer = new Timer(1000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -190,7 +187,7 @@ public class Controller {
         gameUi.getDisconnectItem().addActionListener(e -> {
             try {
                 if (network != null) {
-                    network.close();
+                    network.disconnect();
                 }
                 if (host != null) {
                     host.stop();
@@ -199,6 +196,9 @@ public class Controller {
                     client.disconnect();
                 }
                 gameUi.showMessage("Disconnected.");
+                gameUi.showMenu(); // Show the menu again after disconnection
+                game.disableShipPlacement(); // Disable ship placement
+                game.disableGamePlay(); // Disable gameplay
             } catch (IOException ex) {
                 gameUi.showMessage("Failed to disconnect: " + ex.getMessage());
             }

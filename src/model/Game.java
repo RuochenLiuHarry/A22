@@ -109,7 +109,7 @@ public class Game {
         }
     }
 
-    private void disableShipPlacement() {
+    public void disableShipPlacement() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 JButton button = gameUi.getGridButtons()[i][j];
@@ -304,18 +304,10 @@ public class Game {
                         if (hasPlayerMadeMove) {
                             gameUi.showCannotGoTwiceMessage();
                         } else {
-//                            boolean isHit = checkHit(x, y, getComputerBoard());
-//                            markHitOrMiss(x, y, computerBoardHits, isHit);
                             hasPlayerMadeMove = true;
                             if (gameUi.getNetwork() != null) {
                                 gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
                             }
-//                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
-//                            if (checkVictory(computerHits)) {
-//                     
-//                            	gameUi.getNetwork().sendMessage("GRESULT:" + true);
-//
-//                            }
                         }
                     }
                 });
@@ -437,8 +429,6 @@ public class Game {
     public boolean hasPlayerMadeMove() {
         return hasPlayerMadeMove;
     }
-
-
 
     public void setNetwork(Network network) {
         this.network = network;

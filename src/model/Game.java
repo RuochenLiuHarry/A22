@@ -272,6 +272,38 @@ public class Game {
                         if (hasPlayerMadeMove) {
                             gameUi.showCannotGoTwiceMessage();
                         } else {
+                            boolean isHit = checkHit(x, y, getComputerBoard());
+                            markHitOrMiss(x, y, computerBoardHits, isHit);
+                            hasPlayerMadeMove = true;
+                            if (gameUi.getNetwork() != null) {
+                                gameUi.getNetwork().sendMessage("SHOOT:" + x + "," + y);
+                            }
+                            gameUi.markComputerBoard(x, y, isHit ? gameUi.getHitIcon() : gameUi.getMissIcon());
+                            if (checkVictory(playerHits)) {
+                                gameUi.showVictoryMessage();
+                                disableGamePlay();
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    }
+    
+    public void enablePvpGamePlay() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                int x = i;
+                int y = j;
+                JButton button = gameUi.getComputerGridButtons()[i][j];
+                for (ActionListener al : button.getActionListeners()) {
+                    button.removeActionListener(al);
+                }
+                button.addActionListener(e -> {
+                    if (isPlayerTurn) {
+                        if (hasPlayerMadeMove) {
+                            gameUi.showCannotGoTwiceMessage();
+                        } else {
 //                            boolean isHit = checkHit(x, y, getComputerBoard());
 //                            markHitOrMiss(x, y, computerBoardHits, isHit);
                             hasPlayerMadeMove = true;
@@ -405,9 +437,7 @@ public class Game {
         return hasPlayerMadeMove;
     }
 
-    public void enablePvpGamePlay() {
-        enableGamePlay();
-    }
+
 
     public void setNetwork(Network network) {
         this.network = network;

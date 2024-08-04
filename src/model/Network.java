@@ -56,7 +56,7 @@ public class Network {
                 game.setPlayerTurn(true);
                 gameUi.showMessage("Your turn!");
                 gameUi.showComputerBoard();
-                game.enableGamePlay();
+                game.enablePvpGamePlay();
             } else {
                 game.setPlayerTurn(false);
                 gameUi.showMessage("Waiting for host's move...");
@@ -124,7 +124,7 @@ public class Network {
         } else if (message.equals("END_TURN")) {
             game.setPlayerTurn(true);
             game.setHasPlayerMadeMove(false);
-            game.enableGamePlay();
+            game.enablePvpGamePlay();
             gameUi.showComputerBoard();
             gameUi.showYourTurn();
         }

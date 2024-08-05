@@ -105,7 +105,14 @@ public class Network {
                 gameUi.getNetwork().sendMessage("LOST");
                 game.disableGamePlay();
             }
-        } else if (message.equals("LOST")) {
+        }else if(message.equals("RESTART")) {
+        	game.resetGame();
+            gameUi.resetUI();
+            gameUi.showPveDialog();
+            isHostReady = false; 
+            isClientReady = false; 
+        }else if (message.equals("LOST")) {
+ 
             gameUi.showLossMessage();
             game.disableGamePlay();
         } else if (message.startsWith("READY::")) {

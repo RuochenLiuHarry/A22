@@ -93,9 +93,18 @@ public class Controller {
         });
 
         gameUi.getRestartItem().addActionListener(e -> {
+        	if(isPvpMode) {
+        		gameUi.getNetwork().sendMessage("RESTART");
+        		game.resetGame();
+                gameUi.resetUI();
+                gameUi.showPveDialog();
+                gameUi.getNetwork().setHostReady(false);
+                gameUi.getNetwork().setClientReady(false);
+        	}else {
             game.resetGame();
             gameUi.resetUI();
             gameUi.showPveDialog();
+        	}
         });
 
         gameUi.getExitItem().addActionListener(e -> {

@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class CustomDialog extends JDialog {
     private JTextField addressField;
@@ -13,10 +15,13 @@ public class CustomDialog extends JDialog {
     private int port;
     private String playerName;
     private boolean isHost;
+    private ResourceBundle bundle;
 
     public CustomDialog(Frame owner, boolean isHost) {
-        super(owner, "Network Setup", true);
+        super(owner, "", true);
         this.isHost = isHost;
+        this.bundle = ResourceBundle.getBundle("MessagesBundle", Locale.getDefault());
+        setTitle(bundle.getString("networkSetupTitle"));
         initializeUI();
     }
 
@@ -24,15 +29,15 @@ public class CustomDialog extends JDialog {
         setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridLayout(3, 2));
-        panel.add(new JLabel("Address:"));
+        panel.add(new JLabel(bundle.getString("addressLabel")));
         addressField = new JTextField();
         panel.add(addressField);
 
-        panel.add(new JLabel("Port:"));
+        panel.add(new JLabel(bundle.getString("portLabel")));
         portField = new JTextField();
         panel.add(portField);
 
-        panel.add(new JLabel("Name:"));
+        panel.add(new JLabel(bundle.getString("nameLabel")));
         playerNameField = new JTextField();
         panel.add(playerNameField);
 
@@ -43,8 +48,8 @@ public class CustomDialog extends JDialog {
         add(panel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton okButton = new JButton("OK");
-        JButton cancelButton = new JButton("Cancel");
+        JButton okButton = new JButton(bundle.getString("okButton"));
+        JButton cancelButton = new JButton(bundle.getString("cancelButton"));
 
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);

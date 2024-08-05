@@ -2,6 +2,8 @@ package model;
 
 import java.io.*;
 import java.net.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import controller.Controller;
 import view.GameUi;
 
@@ -15,6 +17,7 @@ public class Network {
     private boolean isHost;
     private boolean isClientReady = false;
     private boolean isHostReady = false;
+    private ResourceBundle bundle;
 
     public Network(Socket socket, GameUi gameUi, Game game, Controller controller, boolean isHost) throws IOException {
         this.socket = socket;
@@ -24,6 +27,7 @@ public class Network {
         this.isHost = isHost;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
+        bundle = ResourceBundle.getBundle("MessagesBundle", Locale.getDefault());
         startNetworkListener();
     }
 
@@ -48,7 +52,7 @@ public class Network {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            gameUi.showMessage("Disconnected from the game.");
+            gameUi.showMessage(bundle.getString("disconnectedMessage"));
             game.resetGame();
             gameUi.resetUI();
             gameUi.showMenu();
@@ -65,17 +69,17 @@ public class Network {
         this.isClientReady = isClientReady;
     }
 
-    public void checkBothReady() { 
+    public void checkBothReady() {
         if (isHostReady && isClientReady) {
-            gameUi.showMessage("Both players are ready! Host goes first.");
+            gameUi.showMessage(bundle.getString("bothReadyMessage"));
             if (isHost) {
                 game.setPlayerTurn(true);
-                gameUi.showMessage("Your turn!");
+                gameUi.showMessage(bundle.getString("yourTurnMessage"));
                 gameUi.showComputerBoard();
                 game.enablePvpGamePlay();
             } else {
                 game.setPlayerTurn(false);
-                gameUi.showMessage("Waiting for host's move...");
+                gameUi.showMessage(bundle.getString("waitingForHostMessage"));
                 gameUi.showPlayerBoard();
             }
         }
@@ -83,7 +87,7 @@ public class Network {
 
     private void processNetworkMessage(String message) {
         if (message.startsWith("CHAT:")) {
-            gameUi.receiveChatMessage("Opponent: " + message.substring(5));
+            gameUi.receiveChatMessage(bundle.getString("opponentMessage") + message.substring(5));
         } else if (message.startsWith("SHOOT:")) {
             String[] parts = message.substring(6).split(",");
 
@@ -105,19 +109,18 @@ public class Network {
                 gameUi.getNetwork().sendMessage("LOST");
                 game.disableGamePlay();
             }
-        }else if(message.equals("RESTART")) {
-        	game.resetGame();
+        } else if (message.equals("RESTART")) {
+            game.resetGame();
             gameUi.resetUI();
             gameUi.showPveDialog();
-            isHostReady = false; 
-            isClientReady = false; 
-        }else if (message.equals("LOST")) {
- 
+            isHostReady = false;
+            isClientReady = false;
+        } else if (message.equals("LOST")) {
             gameUi.showLossMessage();
             game.disableGamePlay();
         } else if (message.startsWith("READY::")) {
             String name = message.split("::")[1];
-            gameUi.showMessage(name + " is ready!");
+            gameUi.showMessage(name + " " + bundle.getString("isReadyMessage"));
             if (isHost) {
                 isClientReady = true;
             } else {
@@ -126,7 +129,7 @@ public class Network {
             checkBothReady();
         } else if (message.equals("PLACE_SHIPS")) {
             game.enableShipPlacement();
-            gameUi.showMessage("Please place your 5 ships on the board.");
+            gameUi.showMessage(bundle.getString("placeShipsMessage"));
         } else if (message.equals("END_TURN")) {
             game.setPlayerTurn(true);
             game.setHasPlayerMadeMove(false);
@@ -147,7 +150,7 @@ public class Network {
                         processNetworkMessage(message);
                     }
                 } catch (IOException ex) {
-                    gameUi.showMessage("Network error: " + ex.getMessage());
+                    gameUi.showMessage(bundle.getString("networkErrorMessage") + ex.getMessage());
                     break;
                 }
             }

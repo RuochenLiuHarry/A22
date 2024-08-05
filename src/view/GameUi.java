@@ -326,7 +326,7 @@ public class GameUi extends JFrame {
         }
     }
 
-    private void updateText() {
+    public void updateText() {
         try {
             gameMenu.setText(bundle.getString("gameMenu"));
             pveItem.setText(bundle.getString("pveItem"));

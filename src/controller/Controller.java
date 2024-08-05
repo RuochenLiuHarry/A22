@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.Timer;
 import javax.swing.JTextField;
 
@@ -25,10 +26,12 @@ public class Controller {
     private CustomDialog clientDialog;
     private boolean isHost;
     private boolean isPvpMode = false;
+    private ResourceBundle bundle;
 
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
+        this.bundle = ResourceBundle.getBundle("MessagesBundle", Locale.getDefault());
         initializeController();
     }
 
@@ -37,7 +40,7 @@ public class Controller {
             isPvpMode = false;
             gameUi.showPveDialog();
             game.enableShipPlacement();
-            gameUi.showMessage("Game mode: PVE");
+            gameUi.showMessage(bundle.getString("gameModePVE"));
         });
 
         gameUi.getHostItem().addActionListener(e -> {
@@ -49,7 +52,7 @@ public class Controller {
                 try {
                     host = new Host();
                     host.start(serverDialog.getPort());
-                    gameUi.showMessage("Waiting for a connection...");
+                    gameUi.showMessage(bundle.getString("waitingForConnection"));
                     new Thread(() -> {
                         try {
                             Socket socket = host.accept();
@@ -58,14 +61,14 @@ public class Controller {
                             game.setNetwork(network);
                             isHost = true;
                             gameUi.setPlayerName(serverDialog.getPlayerName());
-                            gameUi.showMessage("Connected as host.");
+                            gameUi.showMessage(bundle.getString("connectedAsHost"));
                             network.sendMessage("PLACE_SHIPS");
                         } catch (IOException ex) {
-                            gameUi.showMessage("Failed to accept connection: " + ex.getMessage());
+                            gameUi.showMessage(bundle.getString("failedToAcceptConnection") + ex.getMessage());
                         }
                     }).start();
                 } catch (IOException ex) {
-                    gameUi.showMessage("Failed to start host: " + ex.getMessage());
+                    gameUi.showMessage(bundle.getString("failedToStartHost") + ex.getMessage());
                 }
             }
         });
@@ -84,27 +87,27 @@ public class Controller {
                     game.setNetwork(network);
                     isHost = false;
                     gameUi.setPlayerName(clientDialog.getPlayerName());
-                    gameUi.showMessage("Connected to host.");
+                    gameUi.showMessage(bundle.getString("connectedToHost"));
                     network.sendMessage("PLACE_SHIPS");
                 } catch (IOException ex) {
-                    gameUi.showMessage("Failed to connect to host: " + ex.getMessage());
+                    gameUi.showMessage(bundle.getString("failedToConnectToHost") + ex.getMessage());
                 }
             }
         });
 
         gameUi.getRestartItem().addActionListener(e -> {
-        	if(isPvpMode) {
-        		gameUi.getNetwork().sendMessage("RESTART");
-        		game.resetGame();
+            if(isPvpMode) {
+                gameUi.getNetwork().sendMessage("RESTART");
+                game.resetGame();
                 gameUi.resetUI();
                 gameUi.showPveDialog();
                 gameUi.getNetwork().setHostReady(false);
                 gameUi.getNetwork().setClientReady(false);
-        	}else {
-            game.resetGame();
-            gameUi.resetUI();
-            gameUi.showPveDialog();
-        	}
+            } else {
+                game.resetGame();
+                gameUi.resetUI();
+                gameUi.showPveDialog();
+            }
         });
 
         gameUi.getExitItem().addActionListener(e -> {
@@ -117,10 +120,12 @@ public class Controller {
 
         gameUi.getEnglishItem().addActionListener(e -> {
             gameUi.changeLocale(Locale.ENGLISH);
+            this.bundle = ResourceBundle.getBundle("MessagesBundle", Locale.ENGLISH);
         });
 
         gameUi.getChineseItem().addActionListener(e -> {
             gameUi.changeLocale(Locale.SIMPLIFIED_CHINESE);
+            this.bundle = ResourceBundle.getBundle("MessagesBundle", Locale.SIMPLIFIED_CHINESE);
         });
 
         gameUi.getRotateButton().addActionListener(e -> {
@@ -138,11 +143,11 @@ public class Controller {
                     }
                     if (isHost) {
                         network.setHostReady(true);
-                        gameUi.showMessage("Host is ready!");
+                        gameUi.showMessage(bundle.getString("hostIsReady"));
                         gameUi.enableStartButton(false);
                     } else {
                         network.setClientReady(true);
-                        gameUi.showMessage("Client is ready!");
+                        gameUi.showMessage(bundle.getString("clientIsReady"));
                         gameUi.enableStartButton(false);
                     }
                     network.checkBothReady();
@@ -162,7 +167,7 @@ public class Controller {
             if (isPvpMode && network != null) {
                 gameUi.showPlayerBoard();
                 network.sendMessage("END_TURN");
-                gameUi.showMessage("Waiting for opponent's move...");
+                gameUi.showMessage(bundle.getString("waitingForOpponent"));
             } else {
                 if (game.checkVictory(game.getPlayerHits())) {
                     gameUi.showVictoryMessage();
@@ -185,7 +190,7 @@ public class Controller {
             JTextField chatInput = gameUi.getChatInput();
             String message = chatInput.getText();
             if (!message.trim().isEmpty()) {
-                gameUi.showChatMessage("Player: " + message);
+                gameUi.showChatMessage(bundle.getString("playerPrefix") + message);
                 if (network != null) {
                     network.sendMessage("CHAT:" + message);
                 }
@@ -204,12 +209,12 @@ public class Controller {
                 if (client != null) {
                     client.disconnect();
                 }
-                gameUi.showMessage("Disconnected.");
+                gameUi.showMessage(bundle.getString("disconnected"));
                 gameUi.showMenu(); // Show the menu again after disconnection
                 game.disableShipPlacement(); // Disable ship placement
                 game.disableGamePlay(); // Disable gameplay
             } catch (IOException ex) {
-                gameUi.showMessage("Failed to disconnect: " + ex.getMessage());
+                gameUi.showMessage(bundle.getString("failedToDisconnect") + ex.getMessage());
             }
         });
     }

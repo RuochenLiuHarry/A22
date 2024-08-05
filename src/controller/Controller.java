@@ -16,6 +16,10 @@ import model.Network;
 import view.CustomDialog;
 import view.GameUi;
 
+/**
+ * The Controller class handles the interactions between the GameUi and the game logic.
+ * It manages the game state, network connections, and user actions.
+ */
 public class Controller {
     private GameUi gameUi;
     private Game game;
@@ -28,6 +32,12 @@ public class Controller {
     private boolean isPvpMode = false;
     private ResourceBundle bundle;
 
+    /**
+     * Constructor for the Controller class.
+     * Initializes the game UI, game logic, and resource bundle for localization.
+     * 
+     * @param gameUi the GameUi instance
+     */
     public Controller(GameUi gameUi) {
         this.gameUi = gameUi;
         this.game = new Game(gameUi);
@@ -35,6 +45,9 @@ public class Controller {
         initializeController();
     }
 
+    /**
+     * Initializes the controller by setting up action listeners for UI components.
+     */
     private void initializeController() {
         gameUi.getPveItem().addActionListener(e -> {
             isPvpMode = false;

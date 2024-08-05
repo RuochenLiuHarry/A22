@@ -7,7 +7,12 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import model.Network;
 
+/**
+ * GameUi is the main user interface class for the Battleship game. 
+ * It manages the game board, menus, and user interactions.
+ */
 public class GameUi extends JFrame {
+
     // Components declaration
     private JMenu gameMenu;
     private JMenu languageMenu;
@@ -57,6 +62,10 @@ public class GameUi extends JFrame {
     private boolean isPlayerTurn;
     private String playerName;
 
+    /**
+     * Constructor for the GameUi class. Initializes the UI components, loads images,
+     * sets the default locale to English, and displays the splash screen.
+     */
     public GameUi() {
         showSplashScreen("logo.png", 2000);
         initializeComponents();
@@ -66,6 +75,10 @@ public class GameUi extends JFrame {
         initializeChatComponents();
     }
 
+    /**
+     * Initializes chat components, sets up the chat area, chat input field, and send button.
+     * Adds an action listener to the send button to handle sending chat messages.
+     */
     private void initializeChatComponents() {
         chatArea1 = new JTextArea();
         chatField = new JTextField(20);
@@ -87,30 +100,59 @@ public class GameUi extends JFrame {
         });
     }
 
+    /**
+     * Sets the network instance for the game UI.
+     * @param network the Network instance
+     */
     public void setNetwork(Network network) {
         this.network = network;
     }
 
+    /**
+     * Gets the network instance of the game UI.
+     * @return the Network instance
+     */
     public Network getNetwork() {
         return network;
     }
 
+    /**
+     * Sets whether it is the player's turn.
+     * @param isPlayerTurn true if it is the player's turn, false otherwise
+     */
     public void setPlayerTurn(boolean isPlayerTurn) {
         this.isPlayerTurn = isPlayerTurn;
     }
 
+    /**
+     * Sets the player's name.
+     * @param playerName the player's name
+     */
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 
+    /**
+     * Gets the player's name.
+     * @return the player's name
+     */
     public String getPlayerName() {
         return playerName;
     }
 
+    /**
+     * Receives a chat message and appends it to the chat area.
+     * @param message the received chat message
+     */
     public void receiveChatMessage(String message) {
         chatArea1.append(message + "\n");
     }
 
+    /**
+     * Displays the splash screen with the specified image and duration.
+     * @param imagePath the path to the splash screen image
+     * @param duration the duration to display the splash screen in milliseconds
+     */
     private void showSplashScreen(String imagePath, int duration) {
         JWindow splashScreen = new JWindow();
         ImageIcon imageIcon = new ImageIcon(imagePath);
@@ -138,6 +180,9 @@ public class GameUi extends JFrame {
         splashScreen.dispose();
     }
 
+    /**
+     * Initializes the UI components of the game.
+     */
     private void initializeComponents() {
         gameMenu = new JMenu();
         pveItem = new JMenuItem();
@@ -168,6 +213,10 @@ public class GameUi extends JFrame {
         chatScrollPane = new JScrollPane(chatArea);
     }
 
+    /**
+     * Initializes the main UI of the game, including menus, panels, and buttons.
+     * Sets up the layout and adds components to the main panel.
+     */
     private void initializeUI() {
         setTitle("Battleship");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -291,6 +340,9 @@ public class GameUi extends JFrame {
         updateText();
     }
 
+    /**
+     * Resets the UI by clearing the game board and re-enabling the start button.
+     */
     public void resetUI() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -303,6 +355,9 @@ public class GameUi extends JFrame {
         getStartButton().setEnabled(true);
     }
 
+    /**
+     * Loads the images used for the game pieces, such as ships and hit/miss markers.
+     */
     private void loadImages() {
         bowEast = new ImageIcon(new ImageIcon("bow_east.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
         bowNorth = new ImageIcon(new ImageIcon("bow_north.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
@@ -314,6 +369,10 @@ public class GameUi extends JFrame {
         missIcon = new ImageIcon(new ImageIcon("miss.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * Changes the locale of the game UI and updates the text to match the selected locale.
+     * @param locale the new Locale to set
+     */
     public void changeLocale(Locale locale) {
         try {
             Locale.setDefault(locale);
@@ -326,6 +385,9 @@ public class GameUi extends JFrame {
         }
     }
 
+    /**
+     * Updates the text of all UI components to match the current locale.
+     */
     public void updateText() {
         try {
             gameMenu.setText(bundle.getString("gameMenu"));
@@ -349,31 +411,61 @@ public class GameUi extends JFrame {
         }
     }
 
+    /**
+     * Displays the main menu of the game.
+     */
     public void showMenu() {
         setVisible(true);
         JOptionPane.showMessageDialog(this, bundle.getString("showMenuMessage"));
     }
 
+    /**
+     * Displays the Player vs. Environment (PvE) dialog.
+     */
     public void showPveDialog() {
         showMessage(bundle.getString("showPveDialogMessage"));
     }
 
+    /**
+     * Displays a message indicating it is the player's turn.
+     */
     public void showYourTurn() {
         showMessage(bundle.getString("showYourTurnMessage"));
     }
 
+    /**
+     * Places a ship part at the specified coordinates on the player's grid.
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param icon the ImageIcon to place
+     */
     public void placeShipPart(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
+    /**
+     * Marks the player's board with the specified icon at the given coordinates.
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param icon the ImageIcon to place
+     */
     public void markPlayerBoard(int x, int y, ImageIcon icon) {
         gridButtons[x][y].setIcon(icon);
     }
 
+    /**
+     * Marks the computer's board with the specified icon at the given coordinates.
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param icon the ImageIcon to place
+     */
     public void markComputerBoard(int x, int y, ImageIcon icon) {
         computerGridButtons[x][y].setIcon(icon);
     }
 
+    /**
+     * Displays the computer's game board.
+     */
     public void showComputerBoard() {
         panel.remove(gridPanel);
         computerGridPanel = new JPanel(new GridLayout(11, 11, 2, 2));
@@ -396,6 +488,9 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
+    /**
+     * Displays the player's game board.
+     */
     public void showPlayerBoard() {
         if (computerGridPanel.getParent() != null) {
             panel.remove(computerGridPanel);
@@ -405,146 +500,283 @@ public class GameUi extends JFrame {
         panel.repaint();
     }
 
+    /**
+     * Displays the host's game board.
+     */
     public void showHostBoard() {
         showPlayerBoard();
     }
 
+    /**
+     * Gets the Player vs. Environment (PvE) menu item.
+     * @return the PvE menu item
+     */
     public JMenuItem getPveItem() {
         return pveItem;
     }
 
+    /**
+     * Gets the Player vs. Player (PvP) menu.
+     * @return the PvP menu
+     */
     public JMenu getPvpItem() {
         return pvpMenu;
     }
 
+    /**
+     * Gets the host game menu item.
+     * @return the host game menu item
+     */
     public JMenuItem getHostItem() {
         return hostItem;
     }
 
+    /**
+     * Gets the connect game menu item.
+     * @return the connect game menu item
+     */
     public JMenuItem getConnectItem() {
         return connectItem;
     }
 
+    /**
+     * Gets the disconnect game menu item.
+     * @return the disconnect game menu item
+     */
     public JMenuItem getDisconnectItem() {
         return disconnectItem;
     }
 
+    /**
+     * Gets the restart game menu item.
+     * @return the restart game menu item
+     */
     public JMenuItem getRestartItem() {
         return restartItem;
     }
 
+    /**
+     * Gets the exit game menu item.
+     * @return the exit game menu item
+     */
     public JMenuItem getExitItem() {
         return exitItem;
     }
 
+    /**
+     * Gets the English language menu item.
+     * @return the English language menu item
+     */
     public JMenuItem getEnglishItem() {
         return englishItem;
     }
 
+    /**
+     * Gets the Chinese language menu item.
+     * @return the Chinese language menu item
+     */
     public JMenuItem getChineseItem() {
         return chineseItem;
     }
 
+    /**
+     * Gets the rotate button.
+     * @return the rotate button
+     */
     public JButton getRotateButton() {
         return rotateButton;
     }
 
+    /**
+     * Gets the start button.
+     * @return the start button
+     */
     public JButton getStartButton() {
         return startButton;
     }
 
+    /**
+     * Gets the end turn button.
+     * @return the end turn button
+     */
     public JButton getEndTurnButton() {
         return endTurnButton;
     }
 
+    /**
+     * Gets the quit button.
+     * @return the quit button
+     */
     public JButton getQuitButton() {
         return quitButton;
     }
 
+    /**
+     * Gets the east-facing bow image icon.
+     * @return the east-facing bow image icon
+     */
     public ImageIcon getBowEast() {
         return bowEast;
     }
 
+    /**
+     * Gets the north-facing bow image icon.
+     * @return the north-facing bow image icon
+     */
     public ImageIcon getBowNorth() {
         return bowNorth;
     }
 
+    /**
+     * Gets the south-facing bow image icon.
+     * @return the south-facing bow image icon
+     */
     public ImageIcon getBowSouth() {
         return bowSouth;
     }
 
+    /**
+     * Gets the west-facing bow image icon.
+     * @return the west-facing bow image icon
+     */
     public ImageIcon getBowWest() {
         return bowWest;
     }
 
+    /**
+     * Gets the horizontal mid-hull image icon.
+     * @return the horizontal mid-hull image icon
+     */
     public ImageIcon getMidHullHoriz() {
         return midHullHoriz;
     }
 
+    /**
+     * Gets the vertical mid-hull image icon.
+     * @return the vertical mid-hull image icon
+     */
     public ImageIcon getMidHullVert() {
         return midHullVert;
     }
 
+    /**
+     * Gets the hit marker image icon.
+     * @return the hit marker image icon
+     */
     public ImageIcon getHitIcon() {
         return hitIcon;
     }
 
+    /**
+     * Gets the miss marker image icon.
+     * @return the miss marker image icon
+     */
     public ImageIcon getMissIcon() {
         return missIcon;
     }
 
+    /**
+     * Gets the player's grid buttons.
+     * @return a 2D array of player's grid buttons
+     */
     public JButton[][] getGridButtons() {
         return gridButtons;
     }
 
+    /**
+     * Gets the computer's grid buttons.
+     * @return a 2D array of computer's grid buttons
+     */
     public JButton[][] getComputerGridButtons() {
         return computerGridButtons;
     }
 
+    /**
+     * Gets the chat input field.
+     * @return the chat input field
+     */
     public JTextField getChatInput() {
         return chatInput;
     }
 
+    /**
+     * Displays a message indicating the ship rotation direction.
+     * @param isVertical true if the ship is placed vertically, false otherwise
+     */
     public void showRotationMessage(boolean isVertical) {
         showMessage(bundle.getString("showRotationMessage") + (isVertical ? bundle.getString("vertical") : bundle.getString("horizontal")));
     }
 
+    /**
+     * Displays a message indicating that all ships need to be placed before starting the game.
+     */
     public void showPlaceAllShipsMessage() {
         showMessage(bundle.getString("showPlaceAllShipsMessage"));
     }
 
+    /**
+     * Displays a message indicating that all ships have been placed.
+     */
     public void showAllShipsPlacedMessage() {
         showMessage(bundle.getString("showAllShipsPlacedMessage"));
     }
 
+    /**
+     * Displays a message indicating that a ship cannot be placed at the specified location.
+     */
     public void showCannotPlaceShipMessage() {
         showMessage(bundle.getString("showCannotPlaceShipMessage"));
     }
 
+    /**
+     * Displays a victory message.
+     */
     public void showVictoryMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showVictoryMessage"));
     }
 
+    /**
+     * Displays a loss message.
+     */
     public void showLossMessage() {
         JOptionPane.showMessageDialog(this, bundle.getString("showLossMessage"));
     }
 
-    public void enableStartButton(boolean a){
-    	startButton.setEnabled(a);
+    /**
+     * Enables or disables the start button.
+     * @param enable true to enable the button, false to disable
+     */
+    public void enableStartButton(boolean enable) {
+        startButton.setEnabled(enable);
     }
+
+    /**
+     * Displays a message indicating that the player cannot take two turns in a row.
+     */
     public void showCannotGoTwiceMessage() {
         showMessage(bundle.getString("showCannotGoTwiceMessage"));
     }
 
+    /**
+     * Exits the game.
+     */
     public void exitGame() {
         System.exit(0);
     }
 
+    /**
+     * Displays a message in the game log.
+     * @param message the message to display
+     */
     public void showMessage(String message) {
         gameLog.append(message + "\n");
         gameLog.setCaretPosition(gameLog.getDocument().getLength());
     }
 
+    /**
+     * Displays a chat message in the chat area.
+     * @param message the chat message to display
+     */
     public void showChatMessage(String message) {
         chatArea.append(message + "\n");
         chatArea.setCaretPosition(chatArea.getDocument().getLength());

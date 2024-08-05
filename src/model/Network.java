@@ -7,6 +7,10 @@ import java.util.ResourceBundle;
 import controller.Controller;
 import view.GameUi;
 
+/**
+ * The Network class handles the network communication for the Battleship game.
+ * It manages sending and receiving messages between the host and client, and processes game-related messages.
+ */
 public class Network {
     private Socket socket;
     private BufferedReader in;
@@ -19,6 +23,17 @@ public class Network {
     private boolean isHostReady = false;
     private ResourceBundle bundle;
 
+    /**
+     * Constructor for the Network class.
+     * Initializes the network communication with the specified socket, game UI, game logic, and controller.
+     * 
+     * @param socket the network socket
+     * @param gameUi the GameUi instance
+     * @param game the Game instance
+     * @param controller the Controller instance
+     * @param isHost true if this instance represents the host, false if it represents the client
+     * @throws IOException if an I/O error occurs when setting up the network streams
+     */
     public Network(Socket socket, GameUi gameUi, Game game, Controller controller, boolean isHost) throws IOException {
         this.socket = socket;
         this.gameUi = gameUi;
@@ -31,20 +46,39 @@ public class Network {
         startNetworkListener();
     }
 
+    /**
+     * Sends a message to the connected peer.
+     * 
+     * @param message the message to send
+     */
     public void sendMessage(String message) {
         out.println(message);
     }
 
+    /**
+     * Receives a message from the connected peer.
+     * 
+     * @return the received message
+     * @throws IOException if an I/O error occurs when reading the message
+     */
     public String receiveMessage() throws IOException {
         return in.readLine();
     }
 
+    /**
+     * Closes the network connection and releases resources.
+     * 
+     * @throws IOException if an I/O error occurs when closing the network streams or socket
+     */
     public void close() throws IOException {
         if (in != null) in.close();
         if (out != null) out.close();
         if (socket != null) socket.close();
     }
 
+    /**
+     * Disconnects from the network and resets the game UI and game logic.
+     */
     public void disconnect() {
         try {
             sendMessage("DISCONNECT");
@@ -61,14 +95,27 @@ public class Network {
         }
     }
 
+    /**
+     * Sets the host ready status.
+     * 
+     * @param isHostReady true if the host is ready, false otherwise
+     */
     public void setHostReady(boolean isHostReady) {
         this.isHostReady = isHostReady;
     }
 
+    /**
+     * Sets the client ready status.
+     * 
+     * @param isClientReady true if the client is ready, false otherwise
+     */
     public void setClientReady(boolean isClientReady) {
         this.isClientReady = isClientReady;
     }
 
+    /**
+     * Checks if both host and client are ready, and starts the game if they are.
+     */
     public void checkBothReady() {
         if (isHostReady && isClientReady) {
             gameUi.showMessage(bundle.getString("bothReadyMessage"));
@@ -85,6 +132,11 @@ public class Network {
         }
     }
 
+    /**
+     * Processes the received network message and updates the game state accordingly.
+     * 
+     * @param message the received network message
+     */
     private void processNetworkMessage(String message) {
         if (message.startsWith("CHAT:")) {
             gameUi.receiveChatMessage(bundle.getString("opponentMessage") + message.substring(5));
@@ -141,6 +193,9 @@ public class Network {
         }
     }
 
+    /**
+     * Starts a background thread to listen for network messages from the connected peer.
+     */
     private void startNetworkListener() {
         new Thread(() -> {
             while (true) {

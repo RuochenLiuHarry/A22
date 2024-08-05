@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * CustomDialog is a dialog window for setting up network connections in the Battleship game.
+ * It allows the user to enter the address, port, and player name.
+ */
 public class CustomDialog extends JDialog {
     private JTextField addressField;
     private JTextField portField;
@@ -17,6 +21,13 @@ public class CustomDialog extends JDialog {
     private boolean isHost;
     private ResourceBundle bundle;
 
+    /**
+     * Constructor for the CustomDialog class.
+     * Initializes the dialog with the specified owner and host mode.
+     * 
+     * @param owner the parent frame
+     * @param isHost true if the dialog is for the host, false if for the client
+     */
     public CustomDialog(Frame owner, boolean isHost) {
         super(owner, "", true);
         this.isHost = isHost;
@@ -25,6 +36,10 @@ public class CustomDialog extends JDialog {
         initializeUI();
     }
 
+    /**
+     * Initializes the UI components of the dialog.
+     * Sets up the text fields for address, port, and player name, and adds OK and Cancel buttons.
+     */
     private void initializeUI() {
         setLayout(new BorderLayout());
 
@@ -80,14 +95,29 @@ public class CustomDialog extends JDialog {
         setLocationRelativeTo(getOwner());
     }
 
+    /**
+     * Gets the address entered by the user.
+     * 
+     * @return the address as a String
+     */
     public String getAddress() {
         return address;
     }
 
+    /**
+     * Gets the port entered by the user.
+     * 
+     * @return the port as an int
+     */
     public int getPort() {
         return port;
     }
 
+    /**
+     * Gets the player name entered by the user.
+     * 
+     * @return the player name as a String
+     */
     public String getPlayerName() {
         return playerName;
     }

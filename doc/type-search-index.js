@@ -1,1 +1,1 @@
-typeSearchIndex = [{"p":"controller","l":"Controller"},{"p":"model","l":"Game"},{"p":"view","l":"GameUi"},{"p":"test","l":"Main"},{"l":"所有类和接口","u":"allclasses-index.html"}];updateSearchResults();
+typeSearchIndex = [{"p":"model","l":"Client"},{"p":"controller","l":"Controller"},{"p":"view","l":"CustomDialog"},{"p":"model","l":"Game"},{"p":"view","l":"GameUi"},{"p":"model","l":"Host"},{"p":"test","l":"Main"},{"p":"model","l":"Network"},{"l":"所有类和接口","u":"allclasses-index.html"}];updateSearchResults();
